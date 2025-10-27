@@ -117,6 +117,8 @@ router.post('/', (req, res) => {
 
 /**
  * Helper function to validate email format
+ * Note: This is a basic validation. For production use, consider
+ * using a dedicated library like validator.js for more robust validation
  */
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

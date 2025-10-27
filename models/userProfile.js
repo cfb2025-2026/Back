@@ -68,7 +68,8 @@ class UserProfile {
    * @returns {Object} Created profile
    */
   createProfile(profileData) {
-    const id = Date.now().toString();
+    const crypto = require('crypto');
+    const id = crypto.randomUUID();
     const profile = {
       id,
       firstName: profileData.firstName || '',
