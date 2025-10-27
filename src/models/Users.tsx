@@ -7,26 +7,26 @@ export const UserModel = {
         return data;
     },
 
-    async getById(id: number) {
-        const { data, error } = await supabase.from("User").select("*").eq("id", id).single();
+    async getById(users_id: number) {
+        const { data, error } = await supabase.from("User").select("*").eq("users_id", users_id).single();
         if (error) throw new Error(error.message);
         return data;
     },
 
-    async create(user: { username: string; email: string; password: string; birthdate?: string; img_profile?: string; review_id?: number }) {
+    async create(user: { username: string; email: string; password: string; birthdate?: string; img_profile?: string; advice_id?: number }) {
         const { data, error } = await supabase.from("User").insert([user]).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async update(id: number, user: Partial<{ username: string; email: string; password: string; birthdate: string; img_profile: string; review_id: number }>) {
-        const { data, error } = await supabase.from("User").update(user).eq("id", id).select();
+    async update(users_id: number, user: Partial<{ username: string; email: string; password: string; birthdate: string; img_profile: string; advice_id: number }>) {
+        const { data, error } = await supabase.from("User").update(user).eq("users_id", users_id).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async delete(id: number) {
-        const { error } = await supabase.from("User").delete().eq("id", id);
+    async delete(users_id: number) {
+        const { error } = await supabase.from("User").delete().eq("users_id", users_id);
         if (error) throw new Error(error.message);
         return { message: "User deleted" };
     },
