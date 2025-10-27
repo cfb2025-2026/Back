@@ -1,4 +1,4 @@
-import { ProductModel } from "../models/Product.ts";
+import { ProductModel } from "../models/Product.tsx";
 
 export async function productsRoutes(req: Request, path: string) {
     const url = new URL(req.url);
@@ -11,7 +11,7 @@ export async function productsRoutes(req: Request, path: string) {
 
     // GET /api/products/:id
     if (req.method === "GET" && path.match(/^\/api\/products\/\d+$/)) {
-        const id = Number(path.split("/").pop());
+        const id = String(path.split("/").pop());
         const produit = await ProductModel.getById(id);
         return Response.json(produit);
     }
@@ -25,7 +25,7 @@ export async function productsRoutes(req: Request, path: string) {
 
     // PUT /api/products/:id
     if (req.method === "PUT" && path.match(/^\/api\/products\/\d+$/)) {
-        const id = Number(path.split("/").pop());
+        const id = String(path.split("/").pop());
         const body = await req.json();
         const updated = await ProductModel.update(id, body);
         return Response.json(updated);
@@ -33,7 +33,7 @@ export async function productsRoutes(req: Request, path: string) {
 
     // DELETE /api/products/:id
     if (req.method === "DELETE" && path.match(/^\/api\/products\/\d+$/)) {
-        const id = Number(path.split("/").pop());
+        const id = String(path.split("/").pop());
         const deleted = await ProductModel.delete(id);
         return Response.json(deleted);
     }

@@ -1,6 +1,5 @@
 // src/server.tsx
 import { serve } from "bun";
-import supabase from "./config/supabaseClient.ts";
 
 // Import des routes
 import { productsRoutes } from "./routes/ProductRoutes.tsx";
@@ -41,7 +40,6 @@ const server = serve({
     // 3️⃣ 404
     return new Response("Not found", { status: 404 });
   },
-
   port: 5000,
 });
 

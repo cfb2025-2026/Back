@@ -1,4 +1,4 @@
-import { CartItemModel } from "../models/CartItem.ts";
+import { CartItemModel } from "../models/CartItem.tsx";
 
 export const CartItemController = {
     async create(req: Request) {

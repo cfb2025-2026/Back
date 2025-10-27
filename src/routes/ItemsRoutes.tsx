@@ -1,4 +1,4 @@
-import { ItemsControllers } from "../controllers/ItemsControllers.ts";
+import { ItemsControllers } from "../controllers/ItemsControllers.tsx";
 
 export async function itemsRoutes(req: Request, path: string) {
     if (req.method === "GET" && path === "/api/items") return ItemsControllers.getAll(req);

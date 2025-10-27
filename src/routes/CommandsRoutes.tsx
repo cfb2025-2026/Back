@@ -1,4 +1,4 @@
-import { CommandsControllers } from "../controllers/CommandsControllers.ts";
+import { CommandsControllers } from "../controllers/CommandsControllers.tsx";
 
 export async function commandsRoutes(req: Request, path: string) {
     if (req.method === "GET" && path === "/api/orders") return CommandsControllers.getAll(req);

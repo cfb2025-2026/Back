@@ -1,4 +1,4 @@
-import { Commands } from "../models/Commands.ts";
+import { Commands } from "../models/Commands.tsx";
 
 export const CommandsControllers = {
     async getAll(req: Request) {

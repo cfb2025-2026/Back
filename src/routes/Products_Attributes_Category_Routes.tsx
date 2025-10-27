@@ -1,4 +1,4 @@
-import { ProductAttributeCategoryController } from "../controllers/Product_Attribute_Category_Controllers.ts";
+import { ProductAttributeCategoryController } from "../controllers/Product_Attribute_Category_Controllers.tsx";
 
 export async function productAttributeCategoryRoutes(req: Request, path: string) {
     if (req.method === "POST" && path === "/api/productattributecategory") return ProductAttributeCategoryController.create(req);
