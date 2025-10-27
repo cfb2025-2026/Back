@@ -121,8 +121,29 @@ router.post('/', (req, res) => {
  * using a dedicated library like validator.js for more robust validation
  */
 function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  // Simple email validation that avoids ReDoS vulnerabilities
+  // Checks: has @, has content before and after @, has . after @
+  if (typeof email !== 'string' || email.length === 0) {
+    return false;
+  }
+  
+  const atIndex = email.indexOf('@');
+  if (atIndex <= 0 || atIndex === email.length - 1) {
+    return false;
+  }
+  
+  const domain = email.substring(atIndex + 1);
+  const dotIndex = domain.indexOf('.');
+  if (dotIndex <= 0 || dotIndex === domain.length - 1) {
+    return false;
+  }
+  
+  // Check for whitespace
+  if (email.includes(' ')) {
+    return false;
+  }
+  
+  return true;
 }
 
 module.exports = router;
