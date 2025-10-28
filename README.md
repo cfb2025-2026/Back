@@ -42,6 +42,7 @@ Get ALL Product Attribute & Category : https://back-n1rc.onrender.com/api/produc
 
 Get ALL Command & Command : https://back-n1rc.onrender.com/api/productOrder
 
+Pour les Get By ID, Changer iD avec un id d'une commandes, d'un utilisateur ou d'un produit
 
 Toutes les routes se trouvent dans le fichier #server.tsx
 
