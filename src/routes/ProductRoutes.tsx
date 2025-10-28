@@ -6,6 +6,7 @@ export async function ProductsRoutes(req: Request, path: string) {
         const id = path.split("/").pop() as string;
         return ProductController.getById(req, id);
     }
+    
     if (req.method === "POST" && path === "/api/products") return ProductController.create(req);
     if (req.method === "PUT" && path.match(/^\/api\/products\/\d+$/)) {
         const id = String(path.split("/").pop());
