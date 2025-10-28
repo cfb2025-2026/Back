@@ -13,13 +13,13 @@ import { cartItemRoutes } from "./routes/CartsItemRoutes.tsx";
 
 // Mapping des routes
 const routes: Record<string, any> = {
-  "/api/products": ProductsRoutes,
-  "/api/users": usersRoutes,
-  "/api/carts": cartsRoutes,
-  "/api/orders": commandsRoutes,
+  "/api/products": ProductsRoutes, // Get ALL / GET BY ID / Create / Update / Delete
+  "/api/users": usersRoutes, // Get ALL / GET BY ID / Create / Update / Delete
+  "/api/carts": cartsRoutes, // Get ALL / GET BY ID / Create / Update / Delete
+  "/api/orders": commandsRoutes, // Get ALL / GET BY ID / Create / Update / Delete
   "/api/items": itemsRoutes, // Route à faire ?
-  "/api/productCat": productAttributeCategoryRoutes,
-  "/api/productOrder": productInOrderRoutes,
+  "/api/productCat": productAttributeCategoryRoutes, // GET ALL / Create
+  "/api/productOrder": productInOrderRoutes, // GET ALL / Create
   "/api/cartItem": cartItemRoutes, // Route à faire ?
 };
 
