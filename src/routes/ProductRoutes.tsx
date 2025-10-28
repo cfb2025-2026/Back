@@ -1,43 +1,20 @@
-import { ProductModel } from "../models/Product.tsx";
+import { ProductController } from "../controllers/ProductControllers.tsx";
 
-export async function productsRoutes(req: Request, path: string) {
-    const url = new URL(req.url);
-
-    // GET /api/products
-    if (req.method === "GET" && path === "/api/products") {
-        const produits = await ProductModel.getAll();
-        return Response.json(produits);
+export async function ProductsRoutes(req: Request, path: string) {
+    if (req.method === "GET" && path === "/api/products") return ProductController.getAll(req);
+    if (req.method === "GET" && path.match(/^\/api\/products\/[0-9a-fA-F-]+$/)) {
+        const id = path.split("/").pop() as string;
+        return ProductController.getById(req, id);
     }
-
-    // GET /api/products/:id
-    if (req.method === "GET" && path.match(/^\/api\/products\/\d+$/)) {
-        const id = String(path.split("/").pop());
-        const produit = await ProductModel.getById(id);
-        return Response.json(produit);
-    }
-
-    // POST /api/products
-    if (req.method === "POST" && path === "/api/products") {
-        const body = await req.json();
-        const produit = await ProductModel.create(body);
-        return Response.json(produit, { status: 201 });
-    }
-
-    // PUT /api/products/:id
+    if (req.method === "POST" && path === "/api/products") return ProductController.create(req);
     if (req.method === "PUT" && path.match(/^\/api\/products\/\d+$/)) {
         const id = String(path.split("/").pop());
-        const body = await req.json();
-        const updated = await ProductModel.update(id, body);
-        return Response.json(updated);
+        return ProductController.update(req, id);
     }
-
-    // DELETE /api/products/:id
     if (req.method === "DELETE" && path.match(/^\/api\/products\/\d+$/)) {
         const id = String(path.split("/").pop());
-        const deleted = await ProductModel.delete(id);
-        return Response.json(deleted);
+        return ProductController.delete(req, id);
     }
 
-    // Sinon route non trouvée
-    return new Response("Not found", { status: 404 });
+    return new Response(JSON.stringify({ error: "Not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
 }

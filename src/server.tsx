@@ -2,7 +2,7 @@
 import { serve } from "bun";
 
 // Import des routes
-import { productsRoutes } from "./routes/ProductRoutes.tsx";
+import { ProductsRoutes } from "./routes/ProductRoutes.tsx";
 import { usersRoutes } from "./routes/UsersRoutes.tsx";
 import { cartsRoutes } from "./routes/CartsRoutes.tsx";
 import { commandsRoutes } from "./routes/CommandsRoutes.tsx";
@@ -13,7 +13,7 @@ import { cartItemRoutes } from "./routes/CartsItemRoutes.tsx";
 
 // Mapping des routes
 const routes: Record<string, any> = {
-  "/api/products": productsRoutes,
+  "/api/products": ProductsRoutes,
   "/api/users": usersRoutes,
   "/api/carts": cartsRoutes,
   "/api/orders": commandsRoutes,

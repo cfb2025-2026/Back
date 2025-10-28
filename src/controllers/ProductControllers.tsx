@@ -1,49 +1,50 @@
 import { ProductModel } from "../models/Product.tsx";
 
 export const ProductController = {
-    async getAll(req: any, res: any) {
+    async getAll(req: Request) {
         try {
-            const products = await ProductModel.getAll();
-            return res.json(products);
+            const users = await ProductModel.getAll();
+            return new Response(JSON.stringify(users), { headers: { "Content-Type": "application/json" } });
         } catch (err: any) {
-            return res.status(500).json({ error: err.message });
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
         }
     },
 
-    async getById(req: any, res: any) {
+    async getById(req: Request, id: string) {
         try {
-            const product = await ProductModel.getById(Number(req.params.id));
-            if (!product) return res.status(404).json({ message: "Produit non trouvé" });
-            return res.json(product);
+            const user = await ProductModel.getById(id);
+            return new Response(JSON.stringify(user), { headers: { "Content-Type": "application/json" } });
         } catch (err: any) {
-            return res.status(500).json({ error: err.message });
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
         }
     },
 
-    async create(req: any, res: any) {
+    async create(req: Request) {
         try {
-            const product = await ProductModel.create(req.body);
-            return res.status(201).json(product);
+            const body = await req.json();
+            const user = await ProductModel.create(body);
+            return new Response(JSON.stringify(user), { status: 201, headers: { "Content-Type": "application/json" } });
         } catch (err: any) {
-            return res.status(500).json({ error: err.message });
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
         }
     },
 
-    async update(req: any, res: any) {
+    async update(req: Request, id: string) {
         try {
-            const product = await ProductModel.update(Number(req.params.id), req.body);
-            return res.json(product);
+            const body = await req.json();
+            const user = await ProductModel.update(id, body);
+            return new Response(JSON.stringify(user), { headers: { "Content-Type": "application/json" } });
         } catch (err: any) {
-            return res.status(500).json({ error: err.message });
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
         }
     },
 
-    async delete(req: any, res: any) {
+    async delete(req: Request, id: string) {
         try {
-            const response = await ProductModel.delete(Number(req.params.id));
-            return res.json(response);
+            const result = await ProductModel.delete(id);
+            return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
         } catch (err: any) {
-            return res.status(500).json({ error: err.message });
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
         }
     },
 };
