@@ -1,10 +1,19 @@
-import { Commands } from "../models/Commands.ts";
+import { Commands } from "../models/Commands.tsx";
 
 export const CommandsControllers = {
     async getAll(req: Request) {
         try {
             const orders = await Commands.getAll();
             return new Response(JSON.stringify(orders), { headers: { "Content-Type": "application/json" } });
+        } catch (err: any) {
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+        }
+    },
+
+    async getById(req: Request, id: string) {
+        try {
+            const user = await Commands.getById(id);
+            return new Response(JSON.stringify(user), { headers: { "Content-Type": "application/json" } });
         } catch (err: any) {
             return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
         }

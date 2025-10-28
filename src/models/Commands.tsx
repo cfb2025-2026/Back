@@ -1,26 +1,32 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../config/supabaseClient.tsx";
 
 export const Commands = {
     async getAll() {
-        const { data, error } = await supabase.from("Order").select("*");
+        const { data, error } = await supabase.from("Commands").select("*");
         if (error) throw new Error(error.message);
         return data;
     },
 
-    async create(order: { user_id: number; total_price: number; status?: string }) {
-        const { data, error } = await supabase.from("Order").insert([order]).select();
+    async getById(command_id: string) {
+        const { data, error } = await supabase.from("Commands").select("*").eq("command_id", command_id).single();
+        if (error) throw new Error(error.message);
+        return data;
+    },
+
+    async create(command: { user_id: number; total_price: number; command_status?: string }) {
+        const { data, error } = await supabase.from("Commands").insert([command]).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async update(id: number, order: Partial<{ user_id: number; total_price: number; status: string }>) {
-        const { data, error } = await supabase.from("Order").update(order).eq("id", id).select();
+    async update(command_id: number, command: Partial<{ user_id: number; total_price: number; command_status: string }>) {
+        const { data, error } = await supabase.from("Commands").update(command).eq("command_id", command_id).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async delete(id: number) {
-        const { error } = await supabase.from("Order").delete().eq("id", id);
+    async delete(command_id: number) {
+        const { error } = await supabase.from("Commands").delete().eq("command_id", command_id);
         if (error) throw new Error(error.message);
         return { message: "Order deleted" };
     },

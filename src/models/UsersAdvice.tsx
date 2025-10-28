@@ -1,4 +1,4 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../config/supabaseClient.tsx";
 
 export const UsersAdviceModel = {
     async getAll() {

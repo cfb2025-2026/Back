@@ -1,4 +1,4 @@
-import { Roles } from "../models/Roles.ts";
+import { Roles } from "../models/Roles.tsx";
 
 export const RolesControllers = {
     async getAll(req: Request) {

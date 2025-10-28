@@ -1,7 +1,11 @@
-import { CommandsControllers } from "../controllers/CommandsControllers.ts";
+import { CommandsControllers } from "../controllers/CommandsControllers.tsx";
 
 export async function commandsRoutes(req: Request, path: string) {
     if (req.method === "GET" && path === "/api/orders") return CommandsControllers.getAll(req);
+    if (req.method === "GET" && path.match(/^\/api\/orders\/[0-9a-fA-F-]+$/)) {
+        const id = path.split("/").pop() as string;
+        return CommandsControllers.getById(req, id);
+    }
     if (req.method === "POST" && path === "/api/orders") return CommandsControllers.create(req);
     if (req.method === "PUT" && path.match(/^\/api\/orders\/\d+$/)) {
         const id = Number(path.split("/").pop());

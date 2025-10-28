@@ -1,10 +1,19 @@
-import { CartsModel } from "../models/Carts.ts";
+import { CartsModel } from "../models/Carts.tsx";
 
 export const CartController = {
     async getAll(req: Request) {
         try {
             const carts = await CartsModel.getAll();
             return new Response(JSON.stringify(carts), { headers: { "Content-Type": "application/json" } });
+        } catch (err: any) {
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+        }
+    },
+
+    async getById(req: Request, id: string) {
+        try {
+            const user = await CartsModel.getById(id);
+            return new Response(JSON.stringify(user), { headers: { "Content-Type": "application/json" } });
         } catch (err: any) {
             return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
         }

@@ -1,8 +1,14 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../config/supabaseClient.tsx";
 
 export const ProductInCommandsModel = {
-    async create(link: { product_id: number; order_id: number }) {
-        const { data, error } = await supabase.from("ProductInCommand").insert([link]).select();
+    async getAll() {
+        const { data, error } = await supabase.from("Product_InCommands").select("*");
+        if (error) throw new Error(error.message);
+        return data;
+    },
+
+    async create(link: { product_id: number; commands_id: number }) {
+        const { data, error } = await supabase.from("Product_InCommands").insert([link]).select();
         if (error) throw new Error(error.message);
         return data[0];
     },

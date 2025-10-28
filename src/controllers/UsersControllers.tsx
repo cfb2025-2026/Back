@@ -10,7 +10,7 @@ export const UsersControllers = {
         }
     },
 
-    async getById(req: Request, id: number) {
+    async getById(req: Request, id: string) {
         try {
             const user = await UserModel.getById(id);
             return new Response(JSON.stringify(user), { headers: { "Content-Type": "application/json" } });
@@ -29,7 +29,7 @@ export const UsersControllers = {
         }
     },
 
-    async update(req: Request, id: number) {
+    async update(req: Request, id: string) {
         try {
             const body = await req.json();
             const user = await UserModel.update(id, body);
@@ -39,7 +39,7 @@ export const UsersControllers = {
         }
     },
 
-    async delete(req: Request, id: number) {
+    async delete(req: Request, id: string) {
         try {
             const result = await UserModel.delete(id);
             return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });

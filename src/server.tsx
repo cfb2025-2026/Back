@@ -1,35 +1,26 @@
 // src/server.tsx
 import { serve } from "bun";
-import supabase from "./config/supabaseClient.ts";
 
 // Import des routes
-import { productsRoutes } from "./routes/ProductRoutes.tsx";
+import { ProductsRoutes } from "./routes/ProductRoutes.tsx";
 import { usersRoutes } from "./routes/UsersRoutes.tsx";
-import { sellersRoutes } from "./routes/SellersRoutes.tsx";
-import { buyersRoutes } from "./routes/BuyersRoutes.tsx";
-import { rolesRoutes } from "./routes/RolesRoutes.tsx";
 import { cartsRoutes } from "./routes/CartsRoutes.tsx";
 import { commandsRoutes } from "./routes/CommandsRoutes.tsx";
 import { itemsRoutes } from "./routes/ItemsRoutes.tsx";
-import { userRolesRoutes } from "./routes/UsersRolesRoutes.tsx";
 import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Category_Routes.tsx";
 import { productInOrderRoutes } from "./routes/Products_InCommands_Routes.tsx";
 import { cartItemRoutes } from "./routes/CartsItemRoutes.tsx";
 
 // Mapping des routes
 const routes: Record<string, any> = {
-  "/api/products": productsRoutes,
+  "/api/products": ProductsRoutes,
   "/api/users": usersRoutes,
-  "/api/sellers": sellersRoutes,
-  "/api/buyers": buyersRoutes,
-  "/api/roles": rolesRoutes,
   "/api/carts": cartsRoutes,
   "/api/orders": commandsRoutes,
-  "/api/items": itemsRoutes,
-  "/api/userroles": userRolesRoutes,
-  "/api/productattributecategory": productAttributeCategoryRoutes,
-  "/api/productinorder": productInOrderRoutes,
-  "/api/cartitem": cartItemRoutes,
+  "/api/items": itemsRoutes, // Route à faire ?
+  "/api/productCat": productAttributeCategoryRoutes,
+  "/api/productOrder": productInOrderRoutes,
+  "/api/cartItem": cartItemRoutes, // Route à faire ?
 };
 
 // Serveur Bun
@@ -49,7 +40,6 @@ const server = serve({
     // 3️⃣ 404
     return new Response("Not found", { status: 404 });
   },
-
   port: 5000,
 });
 

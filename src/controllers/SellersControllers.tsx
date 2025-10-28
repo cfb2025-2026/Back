@@ -1,4 +1,4 @@
-import { SellerModel } from "../models/Seller.ts";
+import { SellerModel } from "../models/Seller.tsx";
 
 export const SellersControllers = {
     async getAll(req: Request) {

@@ -1,4 +1,4 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../config/supabaseClient.tsx";
 
 export const ProductModel = {
     async getAll() {
@@ -7,26 +7,26 @@ export const ProductModel = {
         return data;
     },
 
-    async getById(id: number) {
-        const { data, error } = await supabase.from("Product").select("*").eq("id", id).single();
+    async getById(product_id: string) {
+        const { data, error } = await supabase.from("Product").select("*").eq("product_id", product_id).single();
         if (error) throw new Error(error.message);
         return data;
     },
 
-    async create(product: { name: string; price: number; img_url?: string; seller_id?: number; review_id?: number }) {
+    async create(product: { product_name: string; product_price: number; product_imgurl?: string; advices_id?: number; }) {
         const { data, error } = await supabase.from("Product").insert([product]).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async update(id: number, product: Partial<{ name: string; price: number; img_url: string; seller_id: number; review_id: number }>) {
-        const { data, error } = await supabase.from("Product").update(product).eq("id", id).select();
+    async update(product_id: string, product: Partial<{ product_name: string; product_price: number; product_imgurl?: string; advices_id: number; }>) {
+        const { data, error } = await supabase.from("Product").update(product).eq("product_id", product_id).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async delete(id: number) {
-        const { error } = await supabase.from("Product").delete().eq("id", id);
+    async delete(product_id: string) {
+        const { error } = await supabase.from("Product").delete().eq("product_id", product_id);
         if (error) throw new Error(error.message);
         return { message: "Product deleted" };
     },
