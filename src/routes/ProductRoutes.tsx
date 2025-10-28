@@ -1,4 +1,4 @@
-import { ProductModel } from "../models/Product.ts";
+import { ProductModel } from "../models/Product.tsx";
 
 export async function productsRoutes(req: Request, path: string) {
     const url = new URL(req.url);
