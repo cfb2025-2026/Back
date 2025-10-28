@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "bun --hot src/server.tsx",
     "build": "bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
-    "start": "NODE_ENV=production bun src/server.tsx"
+    "start": "NODE_ENV=production bun src/server.tsx",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.74.0",
@@ -20,7 +21,8 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19",
-    "@types/react-dom": "^19"
+    "@types/react-dom": "^19",
+    "husky": "^9.1.7"
   },
   "module": "src/server.tsx",
   "peerDependencies": {
