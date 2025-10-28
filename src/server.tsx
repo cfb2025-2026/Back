@@ -2,14 +2,14 @@
 import { serve } from "bun";
 
 // Import des routes
-import { ProductsRoutes } from "./routes/ProductRoutes.tsx";
-import { usersRoutes } from "./routes/UsersRoutes.tsx";
-import { cartsRoutes } from "./routes/CartsRoutes.tsx";
-import { commandsRoutes } from "./routes/CommandsRoutes.tsx";
-import { itemsRoutes } from "./routes/ItemsRoutes.tsx";
-import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Category_Routes.tsx";
-import { productInOrderRoutes } from "./routes/Products_InCommands_Routes.tsx";
-import { cartItemRoutes } from "./routes/CartsItemRoutes.tsx";
+import { ProductsRoutes } from "./routes/ProductRoutes.ts";
+import { usersRoutes } from "./routes/UsersRoutes.ts";
+import { cartsRoutes } from "./routes/CartsRoutes.ts";
+import { commandsRoutes } from "./routes/CommandsRoutes.ts";
+import { itemsRoutes } from "./routes/ItemsRoutes.ts";
+import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Category_Routes.ts";
+import { productInOrderRoutes } from "./routes/Products_InCommands_Routes.ts";
+import { cartItemRoutes } from "./routes/CartsItemRoutes.ts";
 
 // Mapping des routes
 const routes: Record<string, any> = {
