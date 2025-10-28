@@ -1,4 +1,4 @@
-import { CartItemController } from "../controllers/CartsItemControllers.ts";
+import { CartItemController } from "../controllers/CartsItemControllers.tsx";
 
 export async function cartItemRoutes(req: Request, path: string) {
     if (req.method === "POST" && path === "/api/cartitem") return CartItemController.create(req);
