@@ -39,8 +39,7 @@ const server = serve({
 
     // 3️⃣ 404
     return new Response("Not found", { status: 404 });
-  },
-  port: 5000,
+  }
 });
 
 console.log(`🚀 Server running at ${server.url}`);
