@@ -1,4 +1,4 @@
-import { SellersControllers } from "../controllers/SellersControllers.ts";
+import { SellersControllers } from "../controllers/SellersControllers.tsx";
 
 export async function sellersRoutes(req: Request, path: string) {
     if (req.method === "GET" && path === "/api/sellers") return SellersControllers.getAll(req);

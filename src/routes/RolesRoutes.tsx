@@ -1,4 +1,4 @@
-import { RolesControllers } from "../controllers/RolesControllers.ts";
+import { RolesControllers } from "../controllers/RolesControllers.tsx";
 
 export async function rolesRoutes(req: Request, path: string) {
     if (req.method === "GET" && path === "/api/roles") return RolesControllers.getAll(req);
