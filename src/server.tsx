@@ -47,7 +47,7 @@ const server = serve({
         headers: {
           "Access-Control-Allow-Origin": allowedOrigin,
           "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
         },
       });
     }
@@ -59,7 +59,7 @@ const server = serve({
 
         // Add CORS headers to actual response
         response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
-        response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, apikey");
         return response;
       }
     }
