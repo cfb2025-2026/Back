@@ -11,11 +11,13 @@ export async function productsRoutes(req: Request, path: string) {
 
     // GET /api/products/:id
     if (req.method === "GET" && path.match(/^\/api\/products\/[^\/]+$/)) {
-        const id = path.split("/").pop(); // pas besoin de Number() car c'est un UUID
+        const id = path.split("/").pop();
+        if (!id) return new Response("Not found", { status: 404 }); // sécurité
         const produit = await ProductModel.getById(id);
         if (!produit) return new Response("Not found", { status: 404 });
         return Response.json(produit);
     }
+
 
 
     // POST /api/products
@@ -26,16 +28,16 @@ export async function productsRoutes(req: Request, path: string) {
     }
 
     // PUT /api/products/:id
-    if (req.method === "PUT" && path.match(/^\/api\/products\/\d+$/)) {
-        const id = Number(path.split("/").pop());
+    if (req.method === "PUT" && path.match(/^\/api\/products\/[^\/]+$/)) {
+        const id = path.split("/").pop() as string;
         const body = await req.json();
         const updated = await ProductModel.update(id, body);
         return Response.json(updated);
     }
 
-    // DELETE /api/products/:id
-    if (req.method === "DELETE" && path.match(/^\/api\/products\/\d+$/)) {
-        const id = Number(path.split("/").pop());
+// DELETE /api/products/:id
+    if (req.method === "DELETE" && path.match(/^\/api\/products\/[^\/]+$/)) {
+        const id = path.split("/").pop() as string;
         const deleted = await ProductModel.delete(id);
         return Response.json(deleted);
     }

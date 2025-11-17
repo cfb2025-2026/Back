@@ -24,13 +24,13 @@ export const ProductModel = {
         return data[0];
     },
 
-    async update(id: number, product: Partial<{ name: string; price: number; img_url: string; seller_id: number; review_id: number }>) {
+    async update(id: string, product: Partial<{ name: string; price: number; img_url: string; seller_id: number; review_id: number }>) {
         const { data, error } = await supabase.from("Product").update(product).eq("id", id).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async delete(id: number) {
+    async delete(id: string) {
         const { error } = await supabase.from("Product").delete().eq("id", id);
         if (error) throw new Error(error.message);
         return { message: "Product deleted" };
