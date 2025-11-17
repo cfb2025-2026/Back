@@ -1,8 +1,7 @@
 // src/server.tsx
 import { serve } from "bun";
-import supabase from "./config/supabaseClient.ts";
 
-// Import des routes
+// Import routes
 import { productsRoutes } from "./routes/ProductRoutes.tsx";
 import { usersRoutes } from "./routes/UsersRoutes.tsx";
 import { sellersRoutes } from "./routes/SellersRoutes.tsx";
@@ -16,13 +15,13 @@ import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Cat
 import { productInOrderRoutes } from "./routes/Products_InCommands_Routes.tsx";
 import { cartItemRoutes } from "./routes/CartsItemRoutes.tsx";
 
-// Mapping des routes
+// Router mapping
 const routes: Record<string, any> = {
   "/api/products": productsRoutes,
   "/api/users": usersRoutes,
   "/api/sellers": sellersRoutes,
   "/api/buyers": buyersRoutes,
-	"/api/roles": rolesRoutes,
+  "/api/roles": rolesRoutes,
   "/api/carts": cartsRoutes,
   "/api/orders": commandsRoutes,
   "/api/items": itemsRoutes,
@@ -32,15 +31,14 @@ const routes: Record<string, any> = {
   "/api/cartitem": cartItemRoutes,
 };
 
-// Allowed origin (your frontend)
-const allowedOrigin = "http://localhost:3000";
+const allowedOrigin = "*";
 
 const server = serve({
   async fetch(req) {
     const url = new URL(req.url);
     const path = url.pathname;
 
-    // 1️⃣ Handle CORS preflight request
+    // Handle CORS preflight
     if (req.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -52,13 +50,12 @@ const server = serve({
       });
     }
 
-    // 2️⃣ Routes API
-    for (const [prefix, routeHandler] of Object.entries(routes)) {
-      if (path.startsWith(prefix)) {
-        const response = await routeHandler(req, path);
+    // Route matching
+    for (const [prefix, handler] of Object.entries(routes)) {
+      if (path === prefix || path.startsWith(prefix + "/")) {
+        const response = await handler(req, path);
 
-        // On reconstruit une réponse propre avec les headers CORS
-        const newResponse = new Response(response.body, {
+        return new Response(response.body, {
           status: response.status,
           headers: {
             ...Object.fromEntries(response.headers),
@@ -66,17 +63,12 @@ const server = serve({
             "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
           },
         });
-
-        return newResponse;
       }
     }
 
-    // 3️⃣ 404 Not Found
     return new Response("Not found", {
       status: 404,
-      headers: {
-        "Access-Control-Allow-Origin": allowedOrigin,
-      },
+      headers: { "Access-Control-Allow-Origin": allowedOrigin },
     });
   },
 
