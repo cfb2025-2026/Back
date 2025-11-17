@@ -1,4 +1,4 @@
-import { ItemModel } from "../models/Items.ts";
+import { ItemModel } from "../models/Items.tsx";
 
 export const ItemsControllers = {
     async getAll(req: Request) {
