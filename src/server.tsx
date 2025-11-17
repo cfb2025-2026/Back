@@ -1,7 +1,7 @@
 // src/server.tsx
 import { serve } from "bun";
 
-// Import routes
+// Import des routes
 import { productsRoutes } from "./routes/ProductRoutes.tsx";
 import { usersRoutes } from "./routes/UsersRoutes.tsx";
 import { sellersRoutes } from "./routes/SellersRoutes.tsx";
@@ -15,7 +15,7 @@ import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Cat
 import { productInOrderRoutes } from "./routes/Products_InCommands_Routes.tsx";
 import { cartItemRoutes } from "./routes/CartsItemRoutes.tsx";
 
-// Router mapping
+// Mapping des routes
 const routes: Record<string, any> = {
   "/api/products": productsRoutes,
   "/api/users": usersRoutes,
@@ -31,14 +31,16 @@ const routes: Record<string, any> = {
   "/api/cartitem": cartItemRoutes,
 };
 
-const allowedOrigin = "*";
+const allowedOrigin = "*"; // accepte toutes origines pour Render
 
 const server = serve({
   async fetch(req) {
     const url = new URL(req.url);
     const path = url.pathname;
 
-    // Handle CORS preflight
+    console.log("➡️ Request:", req.method, path);
+
+    // Preflight CORS
     if (req.method === "OPTIONS") {
       return new Response(null, {
         status: 204,
@@ -50,29 +52,33 @@ const server = serve({
       });
     }
 
-    // Route matching
+    // Routes
     for (const [prefix, handler] of Object.entries(routes)) {
-      if (path === prefix || path.startsWith(prefix + "/")) {
+      if (path.startsWith(prefix)) {
         const response = await handler(req, path);
 
-        return new Response(response.body, {
+        const newResponse = new Response(response.body, {
           status: response.status,
           headers: {
             ...Object.fromEntries(response.headers),
             "Access-Control-Allow-Origin": allowedOrigin,
-            "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
+            "Access-Control-Allow-Headers":
+              "Content-Type, Authorization, apikey",
           },
         });
+
+        return newResponse;
       }
     }
 
+    // 404
     return new Response("Not found", {
       status: 404,
       headers: { "Access-Control-Allow-Origin": allowedOrigin },
     });
   },
 
-  port: 5000,
+  port: process.env.PORT || 5000,
 });
 
-console.log(`🚀 Server running at ${server.url}`);
+console.log(`🚀 Server running`);
