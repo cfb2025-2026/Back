@@ -1,4 +1,4 @@
-import { ProductInCommandsModel } from "../models/Product_InCommands.ts";
+import { ProductInCommandsModel } from "../models/Product_InCommands.tsx";
 
 export const ProductInOrderController = {
     async create(req: Request) {

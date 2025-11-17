@@ -22,7 +22,7 @@ const routes: Record<string, any> = {
   "/api/users": usersRoutes,
   "/api/sellers": sellersRoutes,
   "/api/buyers": buyersRoutes,
-  "/api/roles": rolesRoutes,
+	"/api/roles": rolesRoutes,
   "/api/carts": cartsRoutes,
   "/api/orders": commandsRoutes,
   "/api/items": itemsRoutes,
