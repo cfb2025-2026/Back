@@ -1,4 +1,4 @@
-import { UsersRolesModel } from "../models/UsersRoles.ts";
+import { UsersRolesModel } from "../models/UsersRoles.tsx";
 
 export const UsersRolesControllers = {
     async create(req: Request) {
