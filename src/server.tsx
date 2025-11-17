@@ -57,12 +57,17 @@ const server = serve({
       if (path.startsWith(prefix)) {
         const response = await routeHandler(req, path);
 
-        // Add CORS headers to actual response
-        response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
-        response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, apikey");
-        return response;
-      }
-    }
+// On transforme la réponse pour ajouter les headers proprement
+const newResponse = new Response(response.body, {
+  status: response.status,
+  headers: {
+    ...Object.fromEntries(response.headers),
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
+  }
+});
+
+return newResponse;
 
     // 3️⃣ 404
     return new Response("Not found", {
