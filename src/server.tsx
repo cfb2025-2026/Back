@@ -32,22 +32,45 @@ const routes: Record<string, any> = {
   "/api/cartitem": cartItemRoutes,
 };
 
-// Serveur Bun
+// Allowed origin (your frontend)
+const allowedOrigin = "http://localhost:3000";
+
 const server = serve({
   async fetch(req) {
     const url = new URL(req.url);
     const path = url.pathname;
 
-    // 1️⃣ Routes API
+    // 1️⃣ Handle CORS preflight request
+    if (req.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Access-Control-Allow-Origin": allowedOrigin,
+          "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      });
+    }
+
+    // 2️⃣ Routes API
     for (const [prefix, routeHandler] of Object.entries(routes)) {
       if (path.startsWith(prefix)) {
-        return await routeHandler(req, path);
+        const response = await routeHandler(req, path);
+
+        // Add CORS headers to actual response
+        response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+        response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        return response;
       }
     }
 
-
     // 3️⃣ 404
-    return new Response("Not found", { status: 404 });
+    return new Response("Not found", {
+      status: 404,
+      headers: {
+        "Access-Control-Allow-Origin": allowedOrigin,
+      },
+    });
   },
 
   port: 5000,
