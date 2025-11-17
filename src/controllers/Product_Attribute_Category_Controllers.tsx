@@ -1,4 +1,4 @@
-import { ProductAttributeCategoryModel } from "../models/Product_Attribute_Category.ts";
+import { ProductAttributeCategoryModel } from "../models/Product_Attribute_Category.tsx";
 
 export const ProductAttributeCategoryController = {
     async create(req: Request) {
