@@ -1,4 +1,4 @@
-import { UsersRolesControllers } from "../controllers/UsersRolesControllers.ts";
+import { UsersRolesControllers } from "../controllers/UsersRolesControllers.tsx";
 
 export async function userRolesRoutes(req: Request, path: string) {
     if (req.method === "POST" && path === "/api/userroles") return UsersRolesControllers.create(req);
