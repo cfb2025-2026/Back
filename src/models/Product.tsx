@@ -7,8 +7,13 @@ export const ProductModel = {
         return data;
     },
 
-    async getById(id: number) {
-        const { data, error } = await supabase.from("Product").select("*").eq("id", id).single();
+    async getById(id: string) {
+        const { data, error } = await supabase
+            .from("Product")
+            .select("*")
+            .eq("id", id) // id = string UUID
+            .single();
+
         if (error) throw new Error(error.message);
         return data;
     },
