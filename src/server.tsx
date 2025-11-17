@@ -65,7 +65,7 @@ const newResponse = new Response(response.body, {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
   }
-});
+}
 
 return newResponse;
 
