@@ -1,4 +1,4 @@
-import { BuyerModel } from "../models/Buyer.ts";
+import { BuyerModel } from "../models/Buyer.tsx";
 
 export const BuyersControllers = {
     async getAll(req: Request) {
