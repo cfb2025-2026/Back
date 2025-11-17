@@ -22,7 +22,7 @@ const routes: Record<string, any> = {
   "/api/users": usersRoutes,
   "/api/sellers": sellersRoutes,
   "/api/buyers": buyersRoutes,
-  "/api/roles": rolesRoutes,
+	"/api/roles": rolesRoutes,
   "/api/carts": cartsRoutes,
   "/api/orders": commandsRoutes,
   "/api/items": itemsRoutes,
@@ -57,19 +57,21 @@ const server = serve({
       if (path.startsWith(prefix)) {
         const response = await routeHandler(req, path);
 
-// On transforme la réponse pour ajouter les headers proprement
-const newResponse = new Response(response.body, {
-  status: response.status,
-  headers: {
-    ...Object.fromEntries(response.headers),
-    "Access-Control-Allow-Origin": allowedOrigin,
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
-  }
-}
+        // On reconstruit une réponse propre avec les headers CORS
+        const newResponse = new Response(response.body, {
+          status: response.status,
+          headers: {
+            ...Object.fromEntries(response.headers),
+            "Access-Control-Allow-Origin": allowedOrigin,
+            "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
+          },
+        });
 
-return newResponse;
+        return newResponse;
+      }
+    }
 
-    // 3️⃣ 404
+    // 3️⃣ 404 Not Found
     return new Response("Not found", {
       status: 404,
       headers: {
