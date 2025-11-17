@@ -10,11 +10,13 @@ export async function productsRoutes(req: Request, path: string) {
     }
 
     // GET /api/products/:id
-    if (req.method === "GET" && path.match(/^\/api\/products\/\d+$/)) {
-        const id = Number(path.split("/").pop());
+    if (req.method === "GET" && path.match(/^\/api\/products\/[^\/]+$/)) {
+        const id = path.split("/").pop(); // pas besoin de Number() car c'est un UUID
         const produit = await ProductModel.getById(id);
+        if (!produit) return new Response("Not found", { status: 404 });
         return Response.json(produit);
     }
+
 
     // POST /api/products
     if (req.method === "POST" && path === "/api/products") {
