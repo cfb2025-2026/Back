@@ -1,26 +1,26 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../config/supabaseClient";
 
 export const CartsModel = {
     async getAll() {
-        const { data, error } = await supabase.from("Cart").select("*");
+        const { data, error } = await supabase.from("Carts").select("*");
         if (error) throw new Error(error.message);
         return data;
     },
 
-    async create(cart: { product_id: number; user_id: number; quantity: number }) {
-        const { data, error } = await supabase.from("Cart").insert([cart]).select();
+    async create(cart: { product_id: string; user_id: string; quantity: number }) {
+        const { data, error } = await supabase.from("Carts").insert([cart]).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async update(id: number, cart: Partial<{ product_id: number; user_id: number; quantity: number }>) {
-        const { data, error } = await supabase.from("Cart").update(cart).eq("id", id).select();
+    async update(id: string, cart: Partial<{ product_id: string; user_id: string; quantity: number }>) {
+        const { data, error } = await supabase.from("Carts").update(cart).eq("carts_id", id).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async delete(id: number) {
-        const { error } = await supabase.from("Cart").delete().eq("id", id);
+    async delete(id: string) {
+        const { error } = await supabase.from("Carts").delete().eq("carts_id", id);
         if (error) throw new Error(error.message);
         return { message: "Cart deleted" };
     },

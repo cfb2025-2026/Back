@@ -1,4 +1,4 @@
-import { CartsModel } from "../models/Carts.tsx";
+import { CartsModel } from "../models/Carts";
 
 export const CartController = {
     async getAll(req: Request) {
@@ -20,7 +20,7 @@ export const CartController = {
         }
     },
 
-    async update(req: Request, id: number) {
+    async update(req: Request, id: string) {
         try {
             const body = await req.json();
             const cart = await CartsModel.update(id, body);
@@ -30,7 +30,7 @@ export const CartController = {
         }
     },
 
-    async delete(req: Request, id: number) {
+    async delete(req: Request, id: string) {
         try {
             const result = await CartsModel.delete(id);
             return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
