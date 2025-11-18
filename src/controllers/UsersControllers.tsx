@@ -1,50 +1,62 @@
-import { UserModel } from "../models/Users.tsx";
+import { UserModel } from "../models/Users";
+import bcrypt from "bcrypt";
 
 export const UsersControllers = {
     async getAll(req: Request) {
         try {
             const users = await UserModel.getAll();
-            return new Response(JSON.stringify(users), { headers: { "Content-Type": "application/json" } });
+            return Response.json(users);
         } catch (err: any) {
-            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+            return Response.json({ error: err.message }, { status: 500 });
         }
     },
 
-    async getById(req: Request, id: number) {
+    async getById(req: Request, id: string) {
         try {
             const user = await UserModel.getById(id);
-            return new Response(JSON.stringify(user), { headers: { "Content-Type": "application/json" } });
+            return Response.json(user);
         } catch (err: any) {
-            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+            return Response.json({ error: "Not found" }, { status: 404 });
         }
     },
 
     async create(req: Request) {
         try {
             const body = await req.json();
+
+            // hash password before creating
+            const hashedPassword = await bcrypt.hash(body.password, 10);
+            body.password = hashedPassword;
+
             const user = await UserModel.create(body);
-            return new Response(JSON.stringify(user), { status: 201, headers: { "Content-Type": "application/json" } });
+            return Response.json(user);
         } catch (err: any) {
-            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+            return Response.json({ error: err.message }, { status: 500 });
         }
     },
 
-    async update(req: Request, id: number) {
+    async update(req: Request, id: string) {
         try {
             const body = await req.json();
+
+            // hash password only if changed
+            if (body.password) {
+                body.password = await bcrypt.hash(body.password, 10);
+            }
+
             const user = await UserModel.update(id, body);
-            return new Response(JSON.stringify(user), { headers: { "Content-Type": "application/json" } });
+            return Response.json(user);
         } catch (err: any) {
-            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+            return Response.json({ error: err.message }, { status: 500 });
         }
     },
 
-    async delete(req: Request, id: number) {
+    async delete(req: Request, id: string) {
         try {
-            const result = await UserModel.delete(id);
-            return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+            const deleted = await UserModel.delete(id);
+            return Response.json(deleted);
         } catch (err: any) {
-            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+            return Response.json({ error: err.message }, { status: 500 });
         }
-    },
+    }
 };
