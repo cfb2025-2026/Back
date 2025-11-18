@@ -7,6 +7,12 @@ export const CartsModel = {
         return data;
     },
 
+    async getById(id: string) {
+        const { data, error } = await supabase.from("Carts").select("*").eq("carts_id", id).single();
+        if (error) throw new Error(error.message);
+        return data;
+    },
+
     async create(cart: { product_id: string; user_id: string; quantity: number }) {
         const { data, error } = await supabase.from("Carts").insert([cart]).select();
         if (error) throw new Error(error.message);

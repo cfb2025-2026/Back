@@ -10,6 +10,16 @@ export const CartController = {
         }
     },
 
+    async getById(req: Request, id: string) {
+        try {
+            const cart = await CartsModel.getById(id);
+            if (!cart) return new Response("Not found", { status: 404 });
+            return new Response(JSON.stringify(cart), { headers: { "Content-Type": "application/json" } });
+        } catch (err: any) {
+            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+        }
+    },
+
     async create(req: Request) {
         try {
             const body = await req.json();
