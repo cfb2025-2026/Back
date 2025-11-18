@@ -22,15 +22,15 @@ export async function cartsRoutes(req: Request, path: string) {
     }
 
     // PUT /api/carts/:id
-    if (method === "PUT" && cleanPath.startsWith("/api/carts/")) {
-        const id = cleanPath.split("/").pop();
+    if (method === "PUT" && path.match(/^\/api\/carts\/([^\/]+)$/)) {
+        const id = path.split("/").pop();
         if (!id) return new Response("Invalid ID", { status: 400 });
         return CartController.update(req, id);
     }
 
     // DELETE /api/carts/:id
-    if (method === "DELETE" && cleanPath.startsWith("/api/carts/")) {
-        const id = cleanPath.split("/").pop();
+    if (method === "DELETE" && path.match(/^\/api\/carts\/([^\/]+)$/)) {
+        const id = path.split("/").pop();
         if (!id) return new Response("Invalid ID", { status: 400 });
         return CartController.delete(req, id);
     }
