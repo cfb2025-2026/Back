@@ -10,7 +10,7 @@ export async function usersRoutes(req: Request, path: string, user: any) {
 
     // GET /api/users -> tous les utilisateurs (admin only)
     if (method === "GET" && path === "/api/users") {
-        if (user.role !== "admin") {
+        if (user.isAdmin !== true) {
             return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
         }
         return UsersControllers.getAll(req, user);
@@ -27,7 +27,7 @@ export async function usersRoutes(req: Request, path: string, user: any) {
 
     if (id && (method === "PUT" || method === "DELETE" || method === "POST")) {
         // POST/PUT/DELETE sur un utilisateur -> admin only
-        if (user.role !== "admin") {
+        if (user.isAdmin !== true) {
             return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
         }
     }
@@ -45,8 +45,4 @@ export async function usersRoutes(req: Request, path: string, user: any) {
     }
 
     // Route non trouvée
-    return new Response(JSON.stringify({ error: "Not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" }
-    });
-}
+    return new Response(JSON.stringify({ error: "Not found" }),

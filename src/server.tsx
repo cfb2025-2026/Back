@@ -54,16 +54,14 @@ async function authMiddleware(req: Request) {
   const token = authHeader.replace("Bearer ", "");
 
   try {
-    // Vérification du token JWT
     const jwt = await import("jsonwebtoken");
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET || "changeme");
+    // decoded contient : { id, email, isAdmin, iat, exp }
     return decoded;
   } catch (err) {
     return new Response(JSON.stringify({ error: "Invalid token" }), { status: 401 });
   }
 }
-
-// Serve Bun
 const server = serve({
   async fetch(req) {
     const url = new URL(req.url);
