@@ -14,14 +14,14 @@ export const UserModel = {
         return data;
     },
 
-    async getByEmail(email: string) {      // ← nouvelle méthode
+    async getByEmail(email: string) {
         const { data, error } = await supabase
             .from("Users")
             .select("*")
-            .eq("email", email)
-            .single();
+            .eq("email", email);
         if (error) throw new Error(error.message);
-        return data;
+        if (!data || data.length === 0) return null; // pas trouvé
+        return data[0]; // on prend le premier (il ne doit y en avoir qu'un seul)
     },
 
     async create(user: { username: string; email: string; password: string; birthdate?: string; imgurl?: string; advice_id?: string }) {
