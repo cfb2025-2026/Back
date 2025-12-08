@@ -16,7 +16,7 @@ export async function usersRoutes(req: Request, path: string, user: any) {
 
     // GET /api/users (admin only)
     if (method === "GET" && path === "/api/users") {
-        if (!user || user.isAdmin !== true) {
+        if (!user || user["isadmin?"] !== true) {
             return withCors(new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 }));
         }
         const response = await UsersControllers.getAll(req, user);
@@ -40,7 +40,7 @@ export async function usersRoutes(req: Request, path: string, user: any) {
 
     // PUT / DELETE / POST avec ID (admin only)
     if (id && ["PUT", "DELETE"].includes(method)) {
-        if (!user || user.isAdmin !== true) {
+        if (!user || user["isadmin?"] !== true) {
             return withCors(new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 }));
         }
 
