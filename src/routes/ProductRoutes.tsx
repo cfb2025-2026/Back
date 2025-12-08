@@ -2,17 +2,12 @@ import { ProductModel } from "../models/Product";
 
 export async function productsRoutes(req: Request, path: string, user: any) {
     const method = req.method;
-    const cleanPath = path.replace(/\/+$/, ""); // retire les slashes finaux
+    const cleanPath = path.replace(/\/+$/, "");
     const parts = cleanPath.split("/");
-    const id = parts.length > 3 ? parts[3] : undefined; // récupère l'ID si présent (/api/products/:id)
-
-    // Vérifie l'authentification
-    if (!user) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-    }
+    const id = parts.length > 3 ? parts[3] : undefined;
 
     try {
-        // GET /api/products -> accessible à tous les utilisateurs
+        // GET /api/products -> accessible à tous
         if (method === "GET" && cleanPath === "/api/products") {
             const produits = await ProductModel.getAll();
             return Response.json(produits);
@@ -25,7 +20,12 @@ export async function productsRoutes(req: Request, path: string, user: any) {
             return Response.json(produit);
         }
 
-        // Vérifie que l'utilisateur est admin pour les actions suivantes
+        // Vérifie l'authentification pour les routes admin
+        if (!user) {
+            return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+        }
+
+        // Vérifie que l'utilisateur est admin pour POST/PUT/DELETE
         if (user.role !== "admin") {
             return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
         }
@@ -50,7 +50,6 @@ export async function productsRoutes(req: Request, path: string, user: any) {
             return Response.json(deleted);
         }
 
-        // Route non trouvée
         return new Response(JSON.stringify({ error: "Not found" }), { status: 404 });
     } catch (e: any) {
         console.error("❌ Product route error:", e);
