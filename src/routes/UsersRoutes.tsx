@@ -45,4 +45,8 @@ export async function usersRoutes(req: Request, path: string, user: any) {
     }
 
     // Route non trouvée
-    return new Response(JSON.stringify({ error: "Not found" }),
+    return new Response(JSON.stringify({ error: "Not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" }
+    });
+}
