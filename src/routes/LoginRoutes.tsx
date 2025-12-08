@@ -14,34 +14,18 @@ export async function loginRoute(req: Request) {
         }
 
         const user = await UserModel.getByEmail(email);
-        if (!user) {
-            return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
-        }
+        if (!user) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
 
         const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
-        }
+        if (!match) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
 
-        // ------------------------------
-        // 🔥 Normalisation du champ "isadmin?"
-        // ------------------------------
-        const isAdminRaw = user["isadmin?"];
-
-        const isAdmin =
-            isAdminRaw === true ||
-            isAdminRaw === 1 ||
-            isAdminRaw === "1" ||
-            isAdminRaw === "true";
-
-        // ------------------------------
-        // 🔥 Génération du token propre
-        // ------------------------------
+        // ✅ Mapper le champ isAdmin? de Supabase dans le token
         const token = jwt.sign(
             {
-                id: user.id,
+                id: user.users_id,
                 email: user.email,
-                isAdmin: isAdmin, // <- propre, simple
+                isAdmin: user["isadmin?"],   // mappe en camelCase
+                isSeller: user["isseller?"]
             },
             JWT_SECRET,
             { expiresIn: "8h" }
