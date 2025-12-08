@@ -25,7 +25,7 @@ export async function loginRoute(req: Request) {
         if (!match) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
 
         const token = jwt.sign(
-            { id: user.id, role: user.role, email: user.email },
+            { id: user.id, "isadmin?": user["isadmin?"], email: user.email },
             JWT_SECRET,
             { expiresIn: "8h" }
         );
