@@ -30,12 +30,12 @@ const routes: Record<string, any> = {
   "/api/productattributecategory": productAttributeCategoryRoutes,
   "/api/productinorder": productInOrderRoutes,
   "/api/cartitem": cartItemRoutes,
-  "/api/login": loginRoute, // route login
+  "/api/login": loginRoute,
 };
 
-const allowedOrigin = "*"; // Render accepte toutes origines
+const allowedOrigin = "*"; // Render et localhost acceptés
 
-// Routes à protéger (JWT obligatoire)
+// Routes nécessitant un JWT
 const protectedRoutes = [
   "/api/users",
   "/api/carts",
@@ -43,10 +43,18 @@ const protectedRoutes = [
   "/api/userroles",
 ];
 
-// Middleware d'authentification JWT
+// Wrapper CORS
+function withCors(response: Response) {
+  const headers = new Headers(response.headers);
+  headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, apikey");
+  headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  return new Response(response.body, { status: response.status, headers });
+}
+
+// Middleware JWT
 async function authMiddleware(req: Request) {
   const authHeader = req.headers.get("Authorization");
-
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Missing token" }), { status: 401 });
   }
@@ -56,72 +64,47 @@ async function authMiddleware(req: Request) {
   try {
     const jwt = await import("jsonwebtoken");
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET || "changeme");
-    // decoded contient : { id, email, isAdmin, iat, exp }
     return decoded;
   } catch (err) {
     return new Response(JSON.stringify({ error: "Invalid token" }), { status: 401 });
   }
 }
+
+// Serve Bun
 const server = serve({
   async fetch(req) {
     const url = new URL(req.url);
-    const path = url.pathname.replace(/\/+$/, ""); // retire les slashes finaux
+    const path = url.pathname.replace(/\/+$/, "");
     console.log("➡️ Request:", req.method, path);
 
     // Preflight CORS
     if (req.method === "OPTIONS") {
-      return new Response(null, {
-        status: 204,
-        headers: {
-          "Access-Control-Allow-Origin": allowedOrigin,
-          "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
-        },
-      });
+      return withCors(new Response(null, { status: 204 }));
     }
 
     // Parcours des routes
     for (const [prefix, handler] of Object.entries(routes)) {
       if (path === prefix || path.startsWith(prefix + "/")) {
-        // Vérification JWT si route protégée
         let user: any = null;
+
+        // Auth pour routes protégées
         if (protectedRoutes.some(route => path.startsWith(route))) {
           const authResult = await authMiddleware(req);
-          if (authResult instanceof Response) return authResult;
+          if (authResult instanceof Response) return withCors(authResult);
           user = authResult;
         }
 
         try {
           const response = await handler(req, path, user);
-
-          // Cloner la réponse pour ajouter les headers CORS
-          const newHeaders = new Headers(response.headers);
-          newHeaders.set("Access-Control-Allow-Origin", allowedOrigin);
-          newHeaders.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-          newHeaders.set("Access-Control-Allow-Headers", "Content-Type, Authorization, apikey");
-
-          return new Response(await response.text(), {
-            status: response.status,
-            headers: newHeaders,
-          });
-
+          return withCors(response);
         } catch (e: any) {
           console.error("❌ Server error:", e);
-          return new Response(JSON.stringify({ error: e.message }), {
-            status: 500,
-            headers: {
-              "Access-Control-Allow-Origin": allowedOrigin,
-              "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
-            },
-          });
+          return withCors(new Response(JSON.stringify({ error: e.message }), { status: 500 }));
         }
       }
     }
 
-    return new Response("Not found", {
-      status: 404,
-      headers: { "Access-Control-Allow-Origin": allowedOrigin },
-    });
+    return withCors(new Response(JSON.stringify({ error: "Not found" }), { status: 404 }));
   },
   port: process.env.PORT || 5000,
 });
