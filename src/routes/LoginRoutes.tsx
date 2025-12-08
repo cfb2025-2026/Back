@@ -18,15 +18,31 @@ export async function loginRoute(req: Request) {
             return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
         }
 
-        // Vérifie le mot de passe (hashé)
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
             return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
         }
 
-        // Génère le token JWT
+        // ------------------------------
+        // 🔥 Normalisation du champ "isadmin?"
+        // ------------------------------
+        const isAdminRaw = user["isadmin?"];
+
+        const isAdmin =
+            isAdminRaw === true ||
+            isAdminRaw === 1 ||
+            isAdminRaw === "1" ||
+            isAdminRaw === "true";
+
+        // ------------------------------
+        // 🔥 Génération du token propre
+        // ------------------------------
         const token = jwt.sign(
-            { id: user.id, isAdmin: user["isadmin?"], email: user.email },
+            {
+                id: user.id,
+                email: user.email,
+                isAdmin: isAdmin, // <- propre, simple
+            },
             JWT_SECRET,
             { expiresIn: "8h" }
         );
@@ -35,6 +51,7 @@ export async function loginRoute(req: Request) {
             status: 200,
             headers: { "Content-Type": "application/json" },
         });
+
     } catch (err: any) {
         return new Response(JSON.stringify({ error: err.message }), { status: 500 });
     }

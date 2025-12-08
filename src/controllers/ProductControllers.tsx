@@ -12,7 +12,7 @@ export const ProductController = {
 
     async getById(req: any, res: any) {
         try {
-            const product = await ProductModel.getById(Number(req.params.id));
+            const product = await ProductModel.getById(req.params.id); // <-- string
             if (!product) return res.status(404).json({ message: "Produit non trouvé" });
             return res.json(product);
         } catch (err: any) {
@@ -31,7 +31,7 @@ export const ProductController = {
 
     async update(req: any, res: any) {
         try {
-            const product = await ProductModel.update(Number(req.params.id), req.body);
+            const product = await ProductModel.update(req.params.id, req.body); // <-- string
             return res.json(product);
         } catch (err: any) {
             return res.status(500).json({ error: err.message });
@@ -40,7 +40,7 @@ export const ProductController = {
 
     async delete(req: any, res: any) {
         try {
-            const response = await ProductModel.delete(Number(req.params.id));
+            const response = await ProductModel.delete(req.params.id); // <-- string
             return res.json(response);
         } catch (err: any) {
             return res.status(500).json({ error: err.message });
