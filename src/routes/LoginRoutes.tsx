@@ -14,18 +14,19 @@ export async function loginRoute(req: Request) {
         }
 
         const user = await UserModel.getByEmail(email);
-        if (!user) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
+        if (!user) {
+            return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
+        }
 
-        // Si mot de passe en clair pour test
-        // const match = password === user.password;
-
-        // Si mot de passe hashé
+        // Vérifie le mot de passe (hashé)
         const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
+        }
 
-        if (!match) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
-
+        // Génère le token JWT
         const token = jwt.sign(
-            { id: user.id, "isadmin?": user["isadmin?"], email: user.email },
+            { id: user.id, isAdmin: user["isadmin?"], email: user.email },
             JWT_SECRET,
             { expiresIn: "8h" }
         );
