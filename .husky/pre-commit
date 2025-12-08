@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Vérification du code (lint + format)..."
+
+bun run lint
+bun run format:fix
+
+if [ $? -ne 0 ]; then
+  echo "❌ Commit annulé (erreurs détectées)"
+  exit 1
+fi
+
+echo "✅ Commit accepté"
+

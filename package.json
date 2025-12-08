@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "bun --hot src/server.tsx",
-    "build": "bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
+    "build": "echo \"(pas de build pour l'API pour l’instant)\"",
     "start": "NODE_ENV=production bun src/server.tsx",
-    "prepare": "husky install"
+    "prepare": "husky",
+    "lint": "eslint src --ext .ts,.tsx",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.74.0",
@@ -22,7 +25,13 @@
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "husky": "^9.1.7"
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.6.2"
   },
   "module": "src/server.tsx",
   "peerDependencies": {
