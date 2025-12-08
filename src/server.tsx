@@ -3,7 +3,6 @@ import { serve } from "bun";
 import supabase from "./config/supabaseClient";
 
 // Import des routes
-import { loginRoute } from "./routes/LoginRoutes";
 import { productsRoutes } from "./routes/ProductRoutes";
 import { usersRoutes } from "./routes/UsersRoutes";
 import { sellersRoutes } from "./routes/SellersRoutes";
@@ -16,10 +15,9 @@ import { userRolesRoutes } from "./routes/UsersRolesRoutes";
 import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Category_Routes";
 import { productInOrderRoutes } from "./routes/Products_InCommands_Routes";
 import { cartItemRoutes } from "./routes/CartsItemRoutes";
+import { loginRoute } from "./routes/LoginRoutes";
 
-// Mapping des routes
 const routes: Record<string, any> = {
-  "/api/login": loginRoute,
   "/api/products": productsRoutes,
   "/api/users": usersRoutes,
   "/api/sellers": sellersRoutes,
@@ -32,11 +30,12 @@ const routes: Record<string, any> = {
   "/api/productattributecategory": productAttributeCategoryRoutes,
   "/api/productinorder": productInOrderRoutes,
   "/api/cartitem": cartItemRoutes,
+  "/api/login": loginRoute, // route login
 };
 
 const allowedOrigin = "*"; // Render accepte toutes origines
 
-// Routes à protéger (JWT Supabase obligatoire)
+// Routes à protéger (JWT obligatoire)
 const protectedRoutes = [
   "/api/users",
   "/api/carts",
@@ -44,7 +43,7 @@ const protectedRoutes = [
   "/api/userroles",
 ];
 
-// Middleware d'auth Supabase
+// Middleware d'authentification JWT
 async function authMiddleware(req: Request) {
   const authHeader = req.headers.get("Authorization");
 
@@ -54,20 +53,21 @@ async function authMiddleware(req: Request) {
 
   const token = authHeader.replace("Bearer ", "");
 
-  const { data, error } = await supabase.auth.getUser(token);
-
-  if (error || !data?.user) {
+  try {
+    // Vérification du token JWT
+    const jwt = await import("jsonwebtoken");
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET || "changeme");
+    return decoded;
+  } catch (err) {
     return new Response(JSON.stringify({ error: "Invalid token" }), { status: 401 });
   }
-
-  return data.user;
 }
 
 // Serve Bun
 const server = serve({
   async fetch(req) {
     const url = new URL(req.url);
-    const path = url.pathname.replace(/\/+$/, ""); // supprime les slashes finaux
+    const path = url.pathname.replace(/\/+$/, ""); // retire les slashes finaux
     console.log("➡️ Request:", req.method, path);
 
     // Preflight CORS
@@ -82,20 +82,18 @@ const server = serve({
       });
     }
 
-    // Routes
+    // Parcours des routes
     for (const [prefix, handler] of Object.entries(routes)) {
       if (path === prefix || path.startsWith(prefix + "/")) {
-
         // Vérification JWT si route protégée
         let user: any = null;
         if (protectedRoutes.some(route => path.startsWith(route))) {
           const authResult = await authMiddleware(req);
-          if (authResult instanceof Response) return authResult; // token invalide
+          if (authResult instanceof Response) return authResult;
           user = authResult;
         }
 
         try {
-          // Passe l'utilisateur à la route
           const response = await handler(req, path, user);
           return new Response(response.body, {
             status: response.status,
@@ -107,7 +105,7 @@ const server = serve({
           });
         } catch (e: any) {
           console.error("❌ Server error:", e);
-          return new Response(`Server error: ${e.message}`, { status: 500 });
+          return new Response(JSON.stringify({ error: e.message }), { status: 500 });
         }
       }
     }
@@ -120,4 +118,4 @@ const server = serve({
   port: process.env.PORT || 5000,
 });
 
-console.log("🚀 Server running on port", process.env.PORT || 5000);
+console.log("🚀 Server running");
