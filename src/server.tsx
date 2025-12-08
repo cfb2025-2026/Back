@@ -93,17 +93,27 @@ const server = serve({
 
         try {
           const response = await handler(req, path, user);
-          return new Response(response.body, {
+
+          // Cloner la réponse pour ajouter les headers CORS
+          const newHeaders = new Headers(response.headers);
+          newHeaders.set("Access-Control-Allow-Origin", allowedOrigin);
+          newHeaders.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+          newHeaders.set("Access-Control-Allow-Headers", "Content-Type, Authorization, apikey");
+
+          return new Response(await response.text(), {
             status: response.status,
+            headers: newHeaders,
+          });
+
+        } catch (e: any) {
+          console.error("❌ Server error:", e);
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500,
             headers: {
-              ...Object.fromEntries(response.headers),
               "Access-Control-Allow-Origin": allowedOrigin,
               "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
             },
           });
-        } catch (e: any) {
-          console.error("❌ Server error:", e);
-          return new Response(JSON.stringify({ error: e.message }), { status: 500 });
         }
       }
     }
