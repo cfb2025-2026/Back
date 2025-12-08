@@ -32,12 +32,8 @@ export const UsersControllers = {
         }
     },
 
-    async create(req: Request, authUser: any) {
+    async create(req: Request) {
         try {
-            // Vérification du rôle admin
-            if (authUser.role !== "admin") {
-                return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
-            }
 
             const body = await req.json();
 

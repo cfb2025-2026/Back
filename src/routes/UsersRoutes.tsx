@@ -33,7 +33,7 @@ export async function usersRoutes(req: Request, path: string, user: any) {
     }
 
     if (method === "POST" && path === "/api/users") {
-        return UsersControllers.create(req, user);
+        return UsersControllers.create(req);
     }
 
     if (method === "PUT" && id) {
