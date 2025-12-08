@@ -3,6 +3,7 @@ import { serve } from "bun";
 import supabase from "./config/supabaseClient";
 
 // Import des routes
+import { loginRoute } from "./routes/LoginRoutes";
 import { productsRoutes } from "./routes/ProductRoutes";
 import { usersRoutes } from "./routes/UsersRoutes";
 import { sellersRoutes } from "./routes/SellersRoutes";
@@ -18,6 +19,7 @@ import { cartItemRoutes } from "./routes/CartsItemRoutes";
 
 // Mapping des routes
 const routes: Record<string, any> = {
+  "/api/login": loginRoute,
   "/api/products": productsRoutes,
   "/api/users": usersRoutes,
   "/api/sellers": sellersRoutes,
@@ -118,4 +120,4 @@ const server = serve({
   port: process.env.PORT || 5000,
 });
 
-console.log("🚀 Server running");
+console.log("🚀 Server running on port", process.env.PORT || 5000);
