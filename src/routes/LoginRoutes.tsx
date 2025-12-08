@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "changeme";
 
-
 export async function loginRoute(req: Request) {
     try {
         const body = await req.json();
@@ -17,10 +16,14 @@ export async function loginRoute(req: Request) {
         const user = await UserModel.getByEmail(email);
         if (!user) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
 
+        // Si mot de passe en clair pour test
+        // const match = password === user.password;
+
+        // Si mot de passe hashé
         const match = await bcrypt.compare(password, user.password);
+
         if (!match) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
 
-        // Générer un token JWT
         const token = jwt.sign(
             { id: user.id, role: user.role, email: user.email },
             JWT_SECRET,
