@@ -16,7 +16,7 @@ export async function usersRoutes(req: Request, path: string, user: any) {
 
     // GET /api/users (admin only)
     if (method === "GET" && path === "/api/users") {
-        if (!user || user["isadmin?"] !== true) {
+        if (!user || !user["isadmin?"]) {
             return withCors(new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 }));
         }
         const response = await UsersControllers.getAll(req, user);
@@ -32,15 +32,15 @@ export async function usersRoutes(req: Request, path: string, user: any) {
         return withCors(response);
     }
 
-    // POST /api/users (création de compte, pas besoin d'être admin)
+    // POST /api/users (création de compte, pas besoin d'être admin ni de token)
     if (method === "POST" && path === "/api/users") {
         const response = await UsersControllers.create(req);
         return withCors(response);
     }
 
-    // PUT / DELETE / POST avec ID (admin only)
+    // PUT / DELETE avec ID (admin only)
     if (id && ["PUT", "DELETE"].includes(method)) {
-        if (!user || user["isadmin?"] !== true) {
+        if (!user || !user["isadmin?"]) {
             return withCors(new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 }));
         }
 
