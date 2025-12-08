@@ -88,7 +88,7 @@ const server = serve({
 
         // Vérification JWT si route protégée
         let user: any = null;
-        if (protectedRoutes.includes(prefix)) {
+        if (protectedRoutes.some(route => path.startsWith(route))) {
           const authResult = await authMiddleware(req);
           if (authResult instanceof Response) return authResult; // token invalide
           user = authResult;
