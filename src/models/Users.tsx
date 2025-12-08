@@ -35,8 +35,8 @@ export const UserModel = {
         birthdate?: string;
         imgurl?: string;
         advice_id?: string | null;
-        "isadmin?"?: boolean;
-        "isseller?"?: boolean;
+        "isadmin"?: boolean;
+        "isseller"?: boolean;
     }) {
         const { data, error } = await supabase
             .from("Users")

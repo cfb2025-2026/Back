@@ -24,8 +24,8 @@ export async function loginRoute(req: Request) {
             {
                 id: user.users_id,
                 email: user.email,
-                isAdmin: user["isadmin?"],   // mappe en camelCase
-                isSeller: user["isseller?"]
+                isAdmin: user["isadmin"],   // mappe en camelCase
+                isSeller: user["isseller"]
             },
             JWT_SECRET,
             { expiresIn: "8h" }
