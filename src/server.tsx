@@ -87,8 +87,11 @@ const server = serve({
       if (path === prefix || path.startsWith(prefix + "/")) {
         let user: any = null;
 
-        // Auth pour routes protégées
-        if (protectedRoutes.some(route => path.startsWith(route))) {
+        // Auth pour routes protégées, sauf POST /api/users
+        const isProtected = protectedRoutes.some(route => path.startsWith(route));
+        const isPublicPostUser = path === "/api/users" && req.method === "POST";
+
+        if (isProtected && !isPublicPostUser) {
           const authResult = await authMiddleware(req);
           if (authResult instanceof Response) return withCors(authResult);
           user = authResult;
