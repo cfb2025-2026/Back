@@ -2,7 +2,8 @@ import { UserModel } from "../models/Users";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = Deno.env.get("JWT_SECRET") || "changeme";
+const JWT_SECRET = process.env.JWT_SECRET || "changeme";
+
 
 export async function loginRoute(req: Request) {
     try {
