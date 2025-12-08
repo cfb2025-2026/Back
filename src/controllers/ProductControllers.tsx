@@ -1,4 +1,4 @@
-import { ProductModel } from "../models/Product.tsx";
+import { ProductModel } from "../models/Product";
 
 export const ProductController = {
     async getAll(req: any, res: any) {

@@ -7,10 +7,10 @@ dotenv.config();
 
 // Get environment variables
 const supabaseUrl = process.env.SUPABASE_DB_URL;
-const supabaseKey = process.env.SUPABASE_DB_API_KEY;
+const supabaseKey = process.env.SUPABASE_DB_Service_Role_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Missing SUPABASE_DB_URL or SUPABASE_DB_API_KEY in .env file');
+    throw new Error('Missing SUPABASE_DB_URL or SUPABASE_DB_Service_Role_KEY in .env file');
 }
 
 // Create Supabase client

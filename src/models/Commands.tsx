@@ -1,8 +1,20 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../config/supabaseClient";
 
 export const Commands = {
     async getAll() {
         const { data, error } = await supabase.from("Order").select("*");
+        if (error) throw new Error(error.message);
+        return data;
+    },
+
+    async getByUserId(user_id: number) {
+        const { data, error } = await supabase.from("Order").select("*").eq("user_id", user_id);
+        if (error) throw new Error(error.message);
+        return data;
+    },
+
+    async getById(id: number) {
+        const { data, error } = await supabase.from("Order").select("*").eq("id", id).single();
         if (error) throw new Error(error.message);
         return data;
     },

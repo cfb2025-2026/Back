@@ -1,19 +1,20 @@
 // src/server.tsx
 import { serve } from "bun";
+import supabase from "./config/supabaseClient";
 
 // Import des routes
-import { productsRoutes } from "./routes/ProductRoutes.tsx";
-import { usersRoutes } from "./routes/UsersRoutes.tsx";
-import { sellersRoutes } from "./routes/SellersRoutes.tsx";
-import { buyersRoutes } from "./routes/BuyersRoutes.tsx";
-import { rolesRoutes } from "./routes/RolesRoutes.tsx";
-import { cartsRoutes } from "./routes/CartsRoutes.tsx";
-import { commandsRoutes } from "./routes/CommandsRoutes.tsx";
-import { itemsRoutes } from "./routes/ItemsRoutes.tsx";
-import { userRolesRoutes } from "./routes/UsersRolesRoutes.tsx";
-import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Category_Routes.tsx";
-import { productInOrderRoutes } from "./routes/Products_InCommands_Routes.tsx";
-import { cartItemRoutes } from "./routes/CartsItemRoutes.tsx";
+import { productsRoutes } from "./routes/ProductRoutes";
+import { usersRoutes } from "./routes/UsersRoutes";
+import { sellersRoutes } from "./routes/SellersRoutes";
+import { buyersRoutes } from "./routes/BuyersRoutes";
+import { rolesRoutes } from "./routes/RolesRoutes";
+import { cartsRoutes } from "./routes/CartsRoutes";
+import { commandsRoutes } from "./routes/CommandsRoutes";
+import { itemsRoutes } from "./routes/ItemsRoutes";
+import { userRolesRoutes } from "./routes/UsersRolesRoutes";
+import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Category_Routes";
+import { productInOrderRoutes } from "./routes/Products_InCommands_Routes";
+import { cartItemRoutes } from "./routes/CartsItemRoutes";
 
 // Mapping des routes
 const routes: Record<string, any> = {
@@ -33,6 +34,34 @@ const routes: Record<string, any> = {
 
 const allowedOrigin = "*"; // Render accepte toutes origines
 
+// Routes à protéger (JWT Supabase obligatoire)
+const protectedRoutes = [
+  "/api/users",
+  "/api/carts",
+  "/api/orders",
+  "/api/userroles",
+];
+
+// Middleware d'auth Supabase
+async function authMiddleware(req: Request) {
+  const authHeader = req.headers.get("Authorization");
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Missing token" }), { status: 401 });
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data?.user) {
+    return new Response(JSON.stringify({ error: "Invalid token" }), { status: 401 });
+  }
+
+  return data.user;
+}
+
+// Serve Bun
 const server = serve({
   async fetch(req) {
     const url = new URL(req.url);
@@ -53,18 +82,25 @@ const server = serve({
 
     // Routes
     for (const [prefix, handler] of Object.entries(routes)) {
-      // on vérifie si le path correspond exactement au préfixe ou est /prefix/:id
       if (path === prefix || path.startsWith(prefix + "/")) {
+
+        // Vérification JWT si route protégée
+        let user: any = null;
+        if (protectedRoutes.includes(prefix)) {
+          const authResult = await authMiddleware(req);
+          if (authResult instanceof Response) return authResult; // token invalide
+          user = authResult;
+        }
+
         try {
-          const response = await handler(req, path);
-          // CORS headers
+          // Passe l'utilisateur à la route
+          const response = await handler(req, path, user);
           return new Response(response.body, {
             status: response.status,
             headers: {
               ...Object.fromEntries(response.headers),
               "Access-Control-Allow-Origin": allowedOrigin,
-              "Access-Control-Allow-Headers":
-                  "Content-Type, Authorization, apikey",
+              "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
             },
           });
         } catch (e: any) {

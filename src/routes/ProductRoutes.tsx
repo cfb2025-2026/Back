@@ -1,24 +1,33 @@
 import { ProductModel } from "../models/Product";
 
-export async function productsRoutes(req: Request, path: string) {
+export async function productsRoutes(req: Request, path: string, user: any) {
     const method = req.method;
     const cleanPath = path.replace(/\/+$/, ""); // retire les slashes finaux
-
     const parts = cleanPath.split("/");
     const id = parts.length > 3 ? parts[3] : undefined; // récupère l'ID si présent (/api/products/:id)
 
+    // Vérifie l'authentification
+    if (!user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+
     try {
-        // GET /api/products
+        // GET /api/products -> accessible à tous les utilisateurs
         if (method === "GET" && cleanPath === "/api/products") {
             const produits = await ProductModel.getAll();
             return Response.json(produits);
         }
 
-        // GET /api/products/:id
+        // GET /api/products/:id -> accessible à tous
         if (method === "GET" && id) {
             const produit = await ProductModel.getById(id);
             if (!produit) return new Response("Not found", { status: 404 });
             return Response.json(produit);
+        }
+
+        // Vérifie que l'utilisateur est admin pour les actions suivantes
+        if (user.role !== "admin") {
+            return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
         }
 
         // POST /api/products
@@ -42,9 +51,9 @@ export async function productsRoutes(req: Request, path: string) {
         }
 
         // Route non trouvée
-        return new Response("Not found", { status: 404 });
+        return new Response(JSON.stringify({ error: "Not found" }), { status: 404 });
     } catch (e: any) {
         console.error("❌ Product route error:", e);
-        return new Response(`Server error: ${e.message}`, { status: 500 });
+        return new Response(JSON.stringify({ error: e.message }), { status: 500 });
     }
 }
