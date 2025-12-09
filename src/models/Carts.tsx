@@ -2,16 +2,16 @@ import supabase from "../config/supabaseClient";
 
 export const CartsModel = {
     async getAll() {
-        const { data, error } = await supabase.from("Cart").select("*");
+        const { data, error } = await supabase.from("Carts").select("*");
         if (error) throw new Error(error.message);
         return data;
     },
 
-    async getById(cart_item_id: string) {
+    async getById(carts_id: string) {
         const { data, error } = await supabase
-            .from("Cart")
+            .from("Carts")
             .select("*")
-            .eq("cart_item_id", cart_item_id)
+            .eq("carts_id", carts_id)
             .single();
         if (error) return null;
         return data;
@@ -19,7 +19,7 @@ export const CartsModel = {
 
     async getByUserId(users_id: string) {
         const { data, error } = await supabase
-            .from("Cart")
+            .from("Carts")
             .select("*")
             .eq("users_id", users_id);
         if (error) throw new Error(error.message);
@@ -28,7 +28,7 @@ export const CartsModel = {
 
     async getByUserAndProduct(users_id: string, product_id: string) {
         const { data, error } = await supabase
-            .from("Cart")
+            .from("Carts")
             .select("*")
             .eq("users_id", users_id)
             .eq("product_id", product_id)
@@ -38,26 +38,26 @@ export const CartsModel = {
     },
 
     async create(item: { users_id: string; product_id: string; quantity: number }) {
-        const { data, error } = await supabase.from("Cart").insert([item]).select();
+        const { data, error } = await suusers_idpabase.from("Cart").insert([item]).select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async update(cart_item_id: string, updates: Partial<{ quantity: number }>) {
+    async update(carts_id: string, updates: Partial<{ quantity: number }>) {
         const { data, error } = await supabase
-            .from("Cart")
+            .from("Carts")
             .update(updates)
-            .eq("cart_item_id", cart_item_id)
+            .eq("carts_id", carts_id)
             .select();
         if (error) throw new Error(error.message);
         return data[0];
     },
 
-    async delete(cart_item_id: string) {
+    async delete(carts_id: string) {
         const { data, error } = await supabase
-            .from("Cart")
+            .from("Carts")
             .delete()
-            .eq("cart_item_id", cart_item_id)
+            .eq("carts_id", carts_id)
             .select();
         if (error) throw new Error(error.message);
         return { message: "Cart item deleted", deleted: data[0] };
