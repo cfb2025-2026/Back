@@ -31,7 +31,7 @@ jobs:
       - name: Smoke test server startup
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-          SUPABASE_DB_API_KEY: ${{ secrets.SUPABASE_DB_Service_Role_KEY }}
+          SUPABASE_DB_Service_Role_KEY: ${{ secrets.SUPABASE_DB_Service_Role_KEY }}
           NODE_ENV: test
         run: |
           bun run src/server.tsx --check-startup
