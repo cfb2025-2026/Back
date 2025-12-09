@@ -40,7 +40,7 @@ export const CartController = {
             const body = await req.json();
 
             // Attribuer automatiquement le panier au user connecté
-            body.user_id = user.id;
+            body.users_id = user.id;
 
             const cart = await CartsModel.create(body);
             return new Response(JSON.stringify(cart), { status: 201, headers: { "Content-Type": "application/json" } });
