@@ -19,22 +19,32 @@ export async function loginRoute(req: Request) {
         const match = await bcrypt.compare(password, user.password);
         if (!match) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
 
-        // 🔥 Génération du token avec isAdmin? et isSeller
+        // Génération du token
         const token = jwt.sign(
             {
                 id: user.users_id,
                 email: user.email,
-                isAdmin: user["isadmin"],   // IMPORTANT : utiliser le vrai nom Supabase
-                isSeller: user["isseller"]
+                isadmin: !!user.isadmin,
+                isseller: !!user.isseller
             },
             JWT_SECRET,
             { expiresIn: "8h" }
         );
 
-        // 🔥 Ajout du users_id dans la réponse
+        // Réponse formatée
         return new Response(JSON.stringify({
+            message: "Login successful",
             token,
-            users_id: user.users_id
+            isadmin: !!user.isadmin,
+            isseller: !!user.isseller,
+            user: {
+                users_id: user.users_id,
+                username: user.username,
+                email: user.email,
+                imgurl: user.imgurl || null,
+                isadmin: !!user.isadmin,
+                isseller: !!user.isseller
+            }
         }), {
             status: 200,
             headers: { "Content-Type": "application/json" },
