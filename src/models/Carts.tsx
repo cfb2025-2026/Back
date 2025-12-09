@@ -37,7 +37,7 @@ export const CartsModel = {
         return data;
     },
 
-    async create(item: { users_id: string; product_id: string; quantity: number }) {
+    async create(item: { users_id: string; product_id: string; product_quantity: number }) {
         const { data, error } = await supabase.from("Carts").insert([item]).select();
         if (error) throw new Error(error.message);
         return data[0];
