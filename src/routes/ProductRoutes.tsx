@@ -4,7 +4,10 @@ export async function ProductsRoutes(req: Request, path: string) {
   if (req.method === "GET" && path === "/api/products")
     return ProductController.getAll(req);
 
-  if (req.method === "GET" && path.match(/^\/api\/products\/[0-9a-fA-F-]+\/images$/)) {
+  if (
+    req.method === "GET" &&
+    path.match(/^\/api\/products\/[0-9a-fA-F-]+\/images$/)
+  ) {
     const segments = path.split("/"); // ["", "api", "products", ":id", "images"]
     const id = segments[3];
 
@@ -33,7 +36,7 @@ export async function ProductsRoutes(req: Request, path: string) {
     const id = String(path.split("/").pop());
     return ProductController.delete(req, id);
   }
-   if (req.method === "GET" && path === "/api/products/filter") {
+  if (req.method === "GET" && path === "/api/products/filter") {
     return ProductController.getFiltered(req);
   }
 

@@ -94,7 +94,7 @@ export const ProductController = {
     }
   },
 
-   async getFiltered(req: Request) {
+  async getFiltered(req: Request) {
     try {
       const url = new URL(req.url);
       const categoryId = url.searchParams.get("category_id") ?? undefined;

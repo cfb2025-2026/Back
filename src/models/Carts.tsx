@@ -12,7 +12,10 @@ export const CartsModel = {
     user_id: string;
     product_quantity: number;
   }) {
-    const { data, error } = await supabase.from("Carts").insert([cart]).select();
+    const { data, error } = await supabase
+      .from("Carts")
+      .insert([cart])
+      .select();
     if (error) throw new Error(error.message);
     return data[0];
   },

@@ -9,7 +9,7 @@ export const ProductModel = {
 
   async getImages(product_id: string) {
     const { data, error } = await supabase
-      .from("Product_Img")        // table des images
+      .from("Product_Img") // table des images
       .select("image_id, image_url")
       .eq("product_id", product_id);
 
@@ -68,10 +68,7 @@ export const ProductModel = {
     return { message: "Product deleted" };
   },
 
-   async getByFilter(filter: {
-    category_id?: string;
-    attribute_id?: string;
-  }) {
+  async getByFilter(filter: { category_id?: string; attribute_id?: string }) {
     const { category_id, attribute_id } = filter;
 
     // 1) on part de la table de liaison
@@ -85,7 +82,9 @@ export const ProductModel = {
     const { data: links, error } = await query;
     if (error) throw new Error(error.message);
 
-    const productIds = [...new Set((links ?? []).map((l: any) => l.product_id))];
+    const productIds = [
+      ...new Set((links ?? []).map((l: any) => l.product_id)),
+    ];
 
     if (productIds.length === 0) return [];
 
