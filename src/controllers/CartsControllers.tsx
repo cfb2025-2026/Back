@@ -57,7 +57,7 @@ export const CartController = {
             }
 
             // Admin OU propriétaire
-            if (cart.user_id !== user.id && user.isAdmin !== true) {
+            if (cart.users_id !== user.id && user.isAdmin !== true) {
                 return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
             }
 
@@ -77,7 +77,7 @@ export const CartController = {
             }
 
             // Admin OU propriétaire
-            if (cart.user_id !== user.id && user.isAdmin !== true) {
+            if (cart.users_id !== user.id && user.isAdmin !== true) {
                 return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
             }
 
