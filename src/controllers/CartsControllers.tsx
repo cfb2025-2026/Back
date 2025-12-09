@@ -1,5 +1,4 @@
 import { CartsModel } from "../models/Carts";
-
 export const CartController = {
     async getAll(req: Request, user: any) {
         try {

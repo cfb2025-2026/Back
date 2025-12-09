@@ -1,10 +1,11 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+. "$(dirname "$0")/_/husky.sh"
 
 echo "🔍 Vérification du code (lint + format)..."
 
-bun run lint
-bun run format:fix
+# Node plutôt que Bun pour éviter blocage
+npx eslint src --ext .ts,.tsx
+npx prettier --write .
 
 if [ $? -ne 0 ]; then
   echo "❌ Commit annulé (erreurs détectées)"
@@ -12,4 +13,3 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "✅ Commit accepté"
-

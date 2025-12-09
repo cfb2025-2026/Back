@@ -11,7 +11,7 @@ function withCors(response: Response) {
 
 export async function usersRoutes(req: Request, path: string, user: any) {
     const method = req.method;
-    const match = path.match(/^\/api\/users\/([^\/]+)$/);
+    const match = path.match(/^\/api\/users\/([^/]+)$/);
     const id = match ? match[1] : undefined;
 
     // GET /api/users (admin only)
