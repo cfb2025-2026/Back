@@ -1,47 +1,59 @@
-import { ProductController } from "../controllers/ProductControllers.tsx";
+// src/routes/ProductRoutes.ts
+import { ProductModel } from "../models/Product";
 
-export async function ProductsRoutes(req: Request, path: string) {
-  if (req.method === "GET" && path === "/api/products")
-    return ProductController.getAll(req);
+export async function productsRoutes(req: Request, path: string, user: any) {
+    const method = req.method;
+    const cleanPath = path.replace(/\/+$/, "");
+    const parts = cleanPath.split("/");
+    const id = parts.length > 3 ? parts[3] : undefined;
 
-  if (
-    req.method === "GET" &&
-    path.match(/^\/api\/products\/[0-9a-fA-F-]+\/images$/)
-  ) {
-    const segments = path.split("/"); // ["", "api", "products", ":id", "images"]
-    const id = segments[3];
+    try {
+        // GET /api/products -> accessible à tous
+        if (method === "GET" && cleanPath === "/api/products") {
+            const produits = await ProductModel.getAll();
+            return new Response(JSON.stringify(produits), { headers: { "Content-Type": "application/json" } });
+        }
 
-    if (!id) {
-      return new Response(JSON.stringify({ error: "Product id manquant" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+        // GET /api/products/:id -> accessible à tous
+        if (method === "GET" && id) {
+            const produit = await ProductModel.getById(id);
+            if (!produit) return new Response(JSON.stringify({ error: "Not found" }), { status: 404 });
+            return new Response(JSON.stringify(produit), { headers: { "Content-Type": "application/json" } });
+        }
+
+        // Vérifie l'authentification pour POST/PUT/DELETE
+        if (!user) {
+            return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+        }
+
+        // Vérifie que l'utilisateur est admin pour POST/PUT/DELETE
+        if (user.isadmin !== true) {
+            return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
+        }
+
+        // POST /api/products
+        if (method === "POST" && cleanPath === "/api/products") {
+            const body = await req.json();
+            const produit = await ProductModel.create(body);
+            return new Response(JSON.stringify(produit), { status: 201, headers: { "Content-Type": "application/json" } });
+        }
+
+        // PUT /api/products/:id
+        if (method === "PUT" && id) {
+            const body = await req.json();
+            const updated = await ProductModel.update(id, body);
+            return new Response(JSON.stringify(updated), { headers: { "Content-Type": "application/json" } });
+        }
+
+        // DELETE /api/products/:id
+        if (method === "DELETE" && id) {
+            const deleted = await ProductModel.delete(id);
+            return new Response(JSON.stringify(deleted), { headers: { "Content-Type": "application/json" } });
+        }
+
+        return new Response(JSON.stringify({ error: "Not found" }), { status: 404 });
+    } catch (e: any) {
+        console.error("❌ Product route error:", e);
+        return new Response(JSON.stringify({ error: e.message }), { status: 500 });
     }
-
-    return ProductController.getImages(req, id);
-  }
-
-  if (req.method === "GET" && path.match(/^\/api\/products\/[0-9a-fA-F-]+$/)) {
-    const id = path.split("/").pop() as string;
-    return ProductController.getById(req, id);
-  }
-
-  if (req.method === "POST" && path === "/api/products")
-    return ProductController.create(req);
-  if (req.method === "PUT" && path.match(/^\/api\/products\/\d+$/)) {
-    const id = String(path.split("/").pop());
-    return ProductController.update(req, id);
-  }
-  if (req.method === "DELETE" && path.match(/^\/api\/products\/\d+$/)) {
-    const id = String(path.split("/").pop());
-    return ProductController.delete(req, id);
-  }
-  if (req.method === "GET" && path === "/api/products/filter") {
-    return ProductController.getFiltered(req);
-  }
-
-  return new Response(JSON.stringify({ error: "Not found" }), {
-    status: 404,
-    headers: { "Content-Type": "application/json" },
-  });
 }
