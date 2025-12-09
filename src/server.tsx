@@ -33,7 +33,7 @@ const routes: Record<string, any> = {
   "/api/login": loginRoute,
 };
 
-const allowedOrigin = "*"; // Render et localhost acceptés
+const allowedOrigin = "*";
 
 // Routes nécessitant un JWT
 const protectedRoutes = [
@@ -41,7 +41,6 @@ const protectedRoutes = [
   "/api/carts",
   "/api/orders",
   "/api/userroles",
-  "/api/products", // ✅ ajouter pour protéger POST/PUT/DELETE
 ];
 
 // Wrapper CORS
@@ -61,7 +60,6 @@ async function authMiddleware(req: Request) {
   }
 
   const token = authHeader.replace("Bearer ", "");
-
   try {
     const jwt = await import("jsonwebtoken");
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET || "changeme");
@@ -71,7 +69,6 @@ async function authMiddleware(req: Request) {
   }
 }
 
-// Serve Bun
 const server = serve({
   async fetch(req) {
     const url = new URL(req.url);
@@ -88,11 +85,15 @@ const server = serve({
       if (path === prefix || path.startsWith(prefix + "/")) {
         let user: any = null;
 
-        // Auth pour routes protégées, sauf POST /api/users
-        const isProtected = protectedRoutes.some(route => path.startsWith(route));
+        // Détermine si la route est protégée
+        const needsAuth =
+            protectedRoutes.some(route => path.startsWith(route)) ||
+            (path.startsWith("/api/products") && ["POST", "PUT", "DELETE"].includes(req.method));
+
+        // Sauf POST public /api/users
         const isPublicPostUser = path === "/api/users" && req.method === "POST";
 
-        if (isProtected && !isPublicPostUser) {
+        if (needsAuth && !isPublicPostUser) {
           const authResult = await authMiddleware(req);
           if (authResult instanceof Response) return withCors(authResult);
           user = authResult;
