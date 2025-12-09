@@ -23,18 +23,18 @@
     "react": "^19",
     "react-dom": "^19"
   },
- "devDependencies": {
-  "@types/bcrypt": "^6.0.0",
-  "@types/bun": "latest",
-  "@types/jsonwebtoken": "^9.0.10",
-  "@types/react": "^19",
-  "@types/react-dom": "^19",
-   "@typescript-eslint/eslint-plugin": "^8.46.4",
-   "@typescript-eslint/parser": "^8.46.4",
-   "eslint": "^9.39.1",
-   "globals": "^16.5.0",
-   "husky": "^9.1.7",
-   "prettier": "^3.6.2"
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.6.2"
   },
   "module": "src/server.tsx",
   "peerDependencies": {

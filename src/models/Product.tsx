@@ -17,16 +17,16 @@ export const ProductModel = {
     return data;
   },
 
-    async getById(id: string) {
-        const { data, error } = await supabase
-            .from("Product")
-            .select("*")
-            .eq("product_id", id) // <-- mettre le vrai nom de colonne ici
-            .single();
+  async getById(id: string) {
+    const { data, error } = await supabase
+      .from("Product")
+      .select("*")
+      .eq("product_id", id) // <-- mettre le vrai nom de colonne ici
+      .single();
 
-        if (error) throw new Error(error.message);
-        return data;
-    },
+    if (error) throw new Error(error.message);
+    return data;
+  },
 
   async create(product: {
     product_name: string;
@@ -42,12 +42,24 @@ export const ProductModel = {
     return data[0];
   },
 
-    async update(id: string, product: Partial<{ name: string; price: number; img_url: string; seller_id: number; review_id: number }>) {
-        const { data, error } = await supabase.from("Product").update(product).eq("product_id", id).select();
-        if (error) throw new Error(error.message);
-        return data[0];
-    },
-
+  async update(
+    id: string,
+    product: Partial<{
+      name: string;
+      price: number;
+      img_url: string;
+      seller_id: number;
+      review_id: number;
+    }>,
+  ) {
+    const { data, error } = await supabase
+      .from("Product")
+      .update(product)
+      .eq("product_id", id)
+      .select();
+    if (error) throw new Error(error.message);
+    return data[0];
+  },
 
   async delete(product_id: string) {
     const { error } = await supabase
@@ -87,5 +99,4 @@ export const ProductModel = {
     if (error2) throw new Error(error2.message);
     return products;
   },
-
 };

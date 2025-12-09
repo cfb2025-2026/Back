@@ -1,15 +1,13 @@
-#!/usr/bin/env sh
-. "$(dirname "$0")/_/husky.sh"
+#!/bin/sh
 
 echo "🔍 Vérification du code (lint + format)..."
 
-# Node plutôt que Bun pour éviter blocage
-npx eslint src --ext .ts,.tsx
-npx prettier --write .
+bunx eslint src --ext .ts,.tsx
+FORMAT_STATUS=$?
 
-if [ $? -ne 0 ]; then
-  echo "❌ Commit annulé (erreurs détectées)"
+if [ $FORMAT_STATUS -ne 0 ]; then
+  echo "❌ Lint échoué"
   exit 1
 fi
 
-echo "✅ Commit accepté"
+echo "✅ Lint OK"
