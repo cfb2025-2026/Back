@@ -43,7 +43,7 @@ export const CartsModel = {
         return data[0];
     },
 
-    async update(carts_id: string, updates: Partial<{ quantity: number }>) {
+    async update(carts_id: string, updates: Partial<{ product_quantity: number }>) {
         const { data, error } = await supabase
             .from("Carts")
             .update(updates)

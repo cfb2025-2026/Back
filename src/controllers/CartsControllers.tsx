@@ -33,7 +33,7 @@ export const CartController = {
     async create(req: Request, user: any) {
         try {
             const body = await req.json();
-            const { product_id, quantity = 1 } = body;
+            const { product_id, product_quantity = 1 } = body;
 
             if (!product_id) {
                 return new Response(JSON.stringify({ error: "Product ID required" }), { status: 400, headers: { "Content-Type": "application/json" } });
@@ -45,13 +45,13 @@ export const CartController = {
             let cartItem;
             if (existingItem) {
                 // Incrémente la quantité
-                cartItem = await CartsModel.update(existingItem.cart_item_id, { quantity: existingItem.quantity + quantity });
+                cartItem = await CartsModel.update(existingItem.cart_item_id, { product_quantity: existingItem.product_quantity + product_quantity });
             } else {
                 // Crée un nouvel item
                 cartItem = await CartsModel.create({
                     users_id: user.id,
                     product_id,
-                    quantity,
+                    product_quantity,
                 });
             }
 
