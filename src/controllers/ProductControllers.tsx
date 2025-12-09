@@ -1,33 +1,24 @@
-import { ProductModel } from "../models/Product.tsx";
+import { ProductModel } from "../models/Product";
 
 export const ProductController = {
-  async getAll(req: Request) {
-    try {
-      const users = await ProductModel.getAll();
-      return new Response(JSON.stringify(users), {
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-  },
+    async getAll(req: any, res: any) {
+        try {
+            const products = await ProductModel.getAll();
+            return res.json(products);
+        } catch (err: any) {
+            return res.status(500).json({ error: err.message });
+        }
+    },
 
-  async getById(req: Request, id: string) {
-    try {
-      const user = await ProductModel.getById(id);
-      return new Response(JSON.stringify(user), {
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-  },
+    async getById(req: any, res: any) {
+        try {
+            const product = await ProductModel.getById(req.params.id); // <-- string
+            if (!product) return res.status(404).json({ message: "Produit non trouvé" });
+            return res.json(product);
+        } catch (err: any) {
+            return res.status(500).json({ error: err.message });
+        }
+    },
 
   async getImages(req: Request, id: string): Promise<Response> {
     try {
@@ -65,34 +56,23 @@ export const ProductController = {
     }
   },
 
-  async update(req: Request, id: string) {
-    try {
-      const body = await req.json();
-      const user = await ProductModel.update(id, body);
-      return new Response(JSON.stringify(user), {
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-  },
+    async update(req: any, res: any) {
+        try {
+            const product = await ProductModel.update(req.params.id, req.body); // <-- string
+            return res.json(product);
+        } catch (err: any) {
+            return res.status(500).json({ error: err.message });
+        }
+    },
 
-  async delete(req: Request, id: string) {
-    try {
-      const result = await ProductModel.delete(id);
-      return new Response(JSON.stringify(result), {
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (err: any) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-  },
+    async delete(req: any, res: any) {
+        try {
+            const response = await ProductModel.delete(req.params.id); // <-- string
+            return res.json(response);
+        } catch (err: any) {
+            return res.status(500).json({ error: err.message });
+        }
+    },
 
   async getFiltered(req: Request) {
     try {

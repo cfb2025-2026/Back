@@ -1,58 +1,115 @@
 // src/server.tsx
 import { serve } from "bun";
+import supabase from "./config/supabaseClient";
 
 // Import des routes
-import { ProductsRoutes } from "./routes/ProductRoutes.tsx";
-import { usersRoutes } from "./routes/UsersRoutes.tsx";
-import { cartsRoutes } from "./routes/CartsRoutes.tsx";
-import { commandsRoutes } from "./routes/CommandsRoutes.tsx";
-import { itemsRoutes } from "./routes/ItemsRoutes.tsx";
-import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Category_Routes.tsx";
-import { productInOrderRoutes } from "./routes/Products_InCommands_Routes.tsx";
-import { cartItemRoutes } from "./routes/CartsItemRoutes.tsx";
+import { productsRoutes } from "./routes/ProductRoutes";
+import { usersRoutes } from "./routes/UsersRoutes";
+import { sellersRoutes } from "./routes/SellersRoutes";
+import { rolesRoutes } from "./routes/RolesRoutes";
+import { cartsRoutes } from "./routes/CartsRoutes";
+import { commandsRoutes } from "./routes/CommandsRoutes";
+import { itemsRoutes } from "./routes/ItemsRoutes";
+import { userRolesRoutes } from "./routes/UsersRolesRoutes";
+import { productAttributeCategoryRoutes } from "./routes/Products_Attributes_Category_Routes";
+import { productInOrderRoutes } from "./routes/Products_InCommands_Routes";
+import { cartItemRoutes } from "./routes/CartsItemRoutes";
+import { loginRoute } from "./routes/LoginRoutes";
 
-// 🔍 est-ce qu'on est en mode "check CI" ?
-const isCIMode = process.argv.includes("--check-startup");
-
-// Mapping des routes
 const routes: Record<string, any> = {
-  "/api/products": ProductsRoutes,
+  "/api/products": productsRoutes,
   "/api/users": usersRoutes,
+  "/api/sellers": sellersRoutes,
+  "/api/roles": rolesRoutes,
   "/api/carts": cartsRoutes,
   "/api/orders": commandsRoutes,
   "/api/items": itemsRoutes,
+  "/api/userroles": userRolesRoutes,
   "/api/productattributecategory": productAttributeCategoryRoutes,
   "/api/productinorder": productInOrderRoutes,
   "/api/cartitem": cartItemRoutes,
+  "/api/login": loginRoute,
 };
 
-// Fonction fetch réutilisable
-async function fetchHandler(req: Request): Promise<Response> {
-  const url = new URL(req.url);
-  const path = url.pathname;
+const allowedOrigin = "*";
 
-  // 1️⃣ Routes API
-  for (const [prefix, routeHandler] of Object.entries(routes)) {
-    if (path.startsWith(prefix)) {
-      return await routeHandler(req, path);
-    }
+// Routes nécessitant un JWT
+const protectedRoutes = [
+  "/api/users",
+  "/api/carts",
+  "/api/orders",
+  "/api/userroles",
+];
+
+// Wrapper CORS
+function withCors(response: Response) {
+  const headers = new Headers(response.headers);
+  headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, apikey");
+  headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  return new Response(response.body, { status: response.status, headers });
+}
+
+// Middleware JWT
+async function authMiddleware(req: Request) {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Missing token" }), { status: 401 });
   }
 
-  // 3️⃣ 404
-  return new Response("Not found", { status: 404 });
+  const token = authHeader.replace("Bearer ", "");
+  try {
+    const jwt = await import("jsonwebtoken");
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET || "changeme");
+    return decoded;
+  } catch (err) {
+    return new Response(JSON.stringify({ error: "Invalid token" }), { status: 401 });
+  }
 }
 
-// 🧪 Mode CI : on vérifie juste que tout s'initialise bien et on sort
-if (isCIMode) {
-  console.log("✅ Startup check passed (CI mode) - server not started.");
-  // Pas de serve(), pas d'écoute réseau
-  // On laisse juste le script se terminer proprement
-} else {
-  // 🚀 Mode normal : on lance le serveur HTTP
-  const server = serve({
-    fetch: fetchHandler,
-    port: 5000,
-  });
+const server = serve({
+  async fetch(req) {
+    const url = new URL(req.url);
+    const path = url.pathname.replace(/\/+$/, "");
+    console.log("➡️ Request:", req.method, path);
 
-  console.log(`🚀 Server running at ${server.url}`);
-}
+    // Preflight CORS
+    if (req.method === "OPTIONS") {
+      return withCors(new Response(null, { status: 204 }));
+    }
+
+    // Parcours des routes
+    for (const [prefix, handler] of Object.entries(routes)) {
+      if (path === prefix || path.startsWith(prefix + "/")) {
+        let user: any = null;
+
+        // Détermine si la route est protégée
+        const needsAuth =
+            protectedRoutes.some(route => path.startsWith(route)) ||
+            (path.startsWith("/api/products") && ["POST", "PUT", "DELETE"].includes(req.method));
+
+        // Sauf POST public /api/users
+        const isPublicPostUser = path === "/api/users" && req.method === "POST";
+
+        if (needsAuth && !isPublicPostUser) {
+          const authResult = await authMiddleware(req);
+          if (authResult instanceof Response) return withCors(authResult);
+          user = authResult;
+        }
+
+        try {
+          const response = await handler(req, path, user);
+          return withCors(response);
+        } catch (e: any) {
+          console.error("❌ Server error:", e);
+          return withCors(new Response(JSON.stringify({ error: e.message }), { status: 500 }));
+        }
+      }
+    }
+
+    return withCors(new Response(JSON.stringify({ error: "Not found" }), { status: 404 }));
+  },
+  port: process.env.PORT || 5000,
+});
+
+console.log("🚀 Server running");
