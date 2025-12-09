@@ -26,7 +26,7 @@ export async function productsRoutes(req: Request, path: string, user: any) {
         }
 
         // Vérifie que l'utilisateur est admin pour POST/PUT/DELETE
-        if (user.role !== "admin") {
+        if (user.isadmin !== true) {
             return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
         }
 

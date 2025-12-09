@@ -38,22 +38,22 @@ export async function usersRoutes(req: Request, path: string, user: any) {
         return withCors(response);
     }
 
-    // PUT / DELETE avec ID (admin only)
-    if (id && ["PUT", "DELETE"].includes(method)) {
-        if (!user || !user["isadmin"]) {
-            return withCors(new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 }));
+        // PUT / DELETE avec ID (admin only)
+        if (id && ["PUT", "DELETE"].includes(method)) {
+            if (!user || !user["isadmin"]) {
+                return withCors(new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 }));
+            }
+    
+            if (method === "PUT") {
+                const response = await UsersControllers.update(req, id, user);
+                return withCors(response);
+            }
+    
+            if (method === "DELETE") {
+                const response = await UsersControllers.delete(req, id, user);
+                return withCors(response);
+            }
         }
-
-        if (method === "PUT") {
-            const response = await UsersControllers.update(req, id, user);
-            return withCors(response);
-        }
-
-        if (method === "DELETE") {
-            const response = await UsersControllers.delete(req, id, user);
-            return withCors(response);
-        }
-    }
 
     return withCors(new Response(JSON.stringify({ error: "Not found" }), { status: 404 }));
 }
