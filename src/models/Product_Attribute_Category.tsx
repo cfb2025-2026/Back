@@ -1,4 +1,4 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../config/supabaseClient";
 
 export const ProductAttributeCategoryModel = {
     async create(link: { product_id: number; attribute_id: number; category_id: number }) {

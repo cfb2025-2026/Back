@@ -1,4 +1,4 @@
-import supabase from "../config/supabaseClient.ts";
+import supabase from "../config/supabaseClient";
 
 export const UsersRolesModel = {
     async create(userRole: { user_id: number; role_id: number }) {

@@ -1,13 +1,24 @@
-import { ProductAttributeCategoryModel } from "../models/Product_Attribute_Category.ts";
+import { ProductAttributeCategoryModel } from "../models/Product_Attribute_Category";
 
 export const ProductAttributeCategoryController = {
-    async create(req: Request) {
+    async create(req: Request, user: any) {
         try {
+            // Vérification du rôle admin
+            if (!user || user.role !== "admin") {
+                return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
+            }
+
             const body = await req.json();
             const link = await ProductAttributeCategoryModel.create(body);
-            return new Response(JSON.stringify(link), { status: 201, headers: { "Content-Type": "application/json" } });
+            return new Response(JSON.stringify(link), {
+                status: 201,
+                headers: { "Content-Type": "application/json" },
+            });
         } catch (err: any) {
-            return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+            return new Response(JSON.stringify({ error: err.message }), {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+            });
         }
     },
 };
