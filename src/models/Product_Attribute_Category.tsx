@@ -2,14 +2,15 @@ import supabase from "../config/supabaseClient.tsx";
 
 export const ProductAttributeCategoryModel = {
   async create(link: {
-    product_id: number;
-    attribute_id: number;
-    category_id: number;
+    product_id: string;
+    attribute_id: string;
+    category_id: string;
   }) {
     const { data, error } = await supabase
-      .from("ProductAttributeCategory")
+      .from("Product_Attribute_Category")
       .insert([link])
-      .select();
+      .select()
+      .single();
     if (error) throw new Error(error.message);
     return data[0];
   },

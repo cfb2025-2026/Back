@@ -29,6 +29,26 @@ export const ProductController = {
     }
   },
 
+  async getImages(req: Request, id: string): Promise<Response> {
+    try {
+      const images = await ProductModel.getImages(id);
+
+      return new Response(JSON.stringify(images), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error(error);
+      return new Response(
+        JSON.stringify({ error: "Erreur lors de la récupération des images" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+  },
+
   async create(req: Request) {
     try {
       const body = await req.json();
@@ -64,6 +84,29 @@ export const ProductController = {
     try {
       const result = await ProductModel.delete(id);
       return new Response(JSON.stringify(result), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err: any) {
+      return new Response(JSON.stringify({ error: err.message }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  },
+
+   async getFiltered(req: Request) {
+    try {
+      const url = new URL(req.url);
+      const categoryId = url.searchParams.get("category_id") ?? undefined;
+      const attributeId = url.searchParams.get("attribute_id") ?? undefined;
+
+      const products = await ProductModel.getByFilter({
+        category_id: categoryId,
+        attribute_id: attributeId,
+      });
+
+      return new Response(JSON.stringify(products), {
+        status: 200,
         headers: { "Content-Type": "application/json" },
       });
     } catch (err: any) {

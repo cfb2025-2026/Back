@@ -1,7 +1,7 @@
 import supabase from "../config/supabaseClient.tsx";
 
 export const CartItemModel = {
-  async create(link: { cart_id: number; item_id: number }) {
+  async create(link: { cart_id: string; item_id: string }) {
     const { data, error } = await supabase
       .from("CartItem")
       .insert([link])
