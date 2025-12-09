@@ -8,7 +8,7 @@ export const CartsModel = {
     },
 
     async getByUserId(user_id: string) {
-        const { data, error } = await supabase.from("Carts").select("*").eq("user_id", user_id);
+        const { data, error } = await supabase.from("Carts").select("*").eq("users_id", user_id);
         if (error) throw new Error(error.message);
         return data;
     },
