@@ -95,7 +95,7 @@ const server = serve({
           const authResult = await authMiddleware(req);
           if (authResult instanceof Response) return withCors(authResult);
           user = authResult;
-        } 
+        }
 
         try {
           const response = await handler(req, path, user);
