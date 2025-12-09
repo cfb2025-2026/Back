@@ -4,7 +4,7 @@ export const CartController = {
     async getAll(req: Request, user: any) {
         try {
             // Si admin, récupère tous les paniers
-            if (user.role === "admin") {
+            if (user.isAdmin === true) {
                 const carts = await CartsModel.getAll();
                 return new Response(JSON.stringify(carts), { headers: { "Content-Type": "application/json" } });
             }
@@ -20,10 +20,12 @@ export const CartController = {
     async getById(req: Request, id: string, user: any) {
         try {
             const cart = await CartsModel.getById(id);
-            if (!cart) return new Response(JSON.stringify({ error: "Not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+            if (!cart) {
+                return new Response(JSON.stringify({ error: "Not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+            }
 
-            // Vérifie que l'utilisateur est propriétaire ou admin
-            if (cart.user_id !== user.id && user.role !== "admin") {
+            // Vérifie admin OU propriétaire
+            if (cart.user_id !== user.id && user.isAdmin !== true) {
                 return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
             }
 
@@ -37,7 +39,7 @@ export const CartController = {
         try {
             const body = await req.json();
 
-            // Attribue automatiquement le panier à l'utilisateur connecté
+            // Attribuer automatiquement le panier au user connecté
             body.user_id = user.id;
 
             const cart = await CartsModel.create(body);
@@ -50,10 +52,12 @@ export const CartController = {
     async update(req: Request, id: string, user: any) {
         try {
             const cart = await CartsModel.getById(id);
-            if (!cart) return new Response(JSON.stringify({ error: "Not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+            if (!cart) {
+                return new Response(JSON.stringify({ error: "Not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+            }
 
-            // Vérifie que l'utilisateur est propriétaire ou admin
-            if (cart.user_id !== user.id && user.role !== "admin") {
+            // Admin OU propriétaire
+            if (cart.user_id !== user.id && user.isAdmin !== true) {
                 return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
             }
 
@@ -68,10 +72,12 @@ export const CartController = {
     async delete(req: Request, id: string, user: any) {
         try {
             const cart = await CartsModel.getById(id);
-            if (!cart) return new Response(JSON.stringify({ error: "Not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+            if (!cart) {
+                return new Response(JSON.stringify({ error: "Not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+            }
 
-            // Vérifie que l'utilisateur est propriétaire ou admin
-            if (cart.user_id !== user.id && user.role !== "admin") {
+            // Admin OU propriétaire
+            if (cart.user_id !== user.id && user.isAdmin !== true) {
                 return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { "Content-Type": "application/json" } });
             }
 
