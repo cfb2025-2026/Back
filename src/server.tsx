@@ -41,6 +41,7 @@ const protectedRoutes = [
   "/api/carts",
   "/api/orders",
   "/api/userroles",
+  "/api/products", // ✅ ajouter pour protéger POST/PUT/DELETE
 ];
 
 // Wrapper CORS
