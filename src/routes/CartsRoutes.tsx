@@ -4,12 +4,13 @@ export async function cartsRoutes(req: Request, path: string, user: any) {
     const cleanPath = path.replace(/\/+$/, ""); // remove trailing slashes
     const method = req.method;
 
+    // Vérifier que l'utilisateur est authentifié pour TOUTES les routes
+    if (!user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
 
-
-    // GET /api/carts -> récupérer tous les paniers (admin ou selon besoin)
+    // GET /api/carts -> récupérer tous les paniers (admin ou les siens)
     if (method === "GET" && cleanPath === "/api/carts") {
-        // Exemple : si seulement admin peut voir tous les paniers
-        // if (user.role !== "admin") return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
         return CartController.getAll(req, user);
     }
 
@@ -18,11 +19,6 @@ export async function cartsRoutes(req: Request, path: string, user: any) {
         const id = cleanPath.split("/").pop();
         if (!id) return new Response("Invalid ID", { status: 400 });
         return CartController.getById(req, id, user);
-    }
-
-    // Vérifier que l'utilisateur est authentifié
-    if (!user) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
     }
 
     // POST /api/carts -> créer un panier
